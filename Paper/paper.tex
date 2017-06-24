@@ -5,21 +5,28 @@
 \title{Using a Two-Layer Neural Network and Physicochemical Properties to Classify Glass for Forensic Analysis}
 
 \author{%
-\name{Michael Arango, Mark Barna \& Paul Brewster}
-}
+\name{Michael Arango, Mark Barna \& Paul Brewster}}
 
-\abstract{We need to figure out if we want an abstract in addition to the project proposal.....}
-
+%\abstract{abstract text goes here...}
 \date{\today}
-
 \maketitle
 
 \section{Project Proposal}
 \label{sec1}
+In this study, we will use the physicochemical properties of glass to determine whether or not a given glass sample was taken from a window. This is a fundamental problem in forensic analysis as it is highly unlikely that glass fragments will be found on people unless they have been present at the time glass breaks. Glass analysis is of vital importance in forensic science as it allows us to test if the glass fragment found on a person is the same as the glass at a crime scene. Since glass is made up of several raw materials and certain elements impart specific properties, we can find out a lot about the glass if we analyze the chemical composition.
 
+The dataset we chose for analysis was made available for download from the UCI Machine Learning Repository and was created by the USA Forensic Science Service. There are 214 observations of 9 different features along with 214 targets that specify whether the glass sample came from a window or not. While we would like more data to train a neural network, we believe the dataset is large enough for our purposes. It is difficult to know before we train a neural network if we have enough data, but the amount of data required is directly related to the complexity of the underlying decision boundary we are trying to implement. We won't 
+know how complex the decision boundary we are trying to approximate is until we train the network, but we feel confident using the dataset as many others have used the dataset and found robust results. Several others papers in the literature use much more complex methods than we will employ and have not found the size of the data to be an issue. 
 
+We have chosen a two-layer perceptron network with tangent-sigmoid transfer functions in the hidden layer and \emph{softmax} transfer functions in the output layer. This is a fairly standard network for pattern recognition. Moreover, we will use the \emph{Scaled Conjugate Gradient (SGD)} algorithm to train the network as it is good for pattern recognition problems in which the output layer uses a non-linear transfer function. Since we do not expect the training error to converge to zero, we implement early stopping criteria to prevent overfitting. Lastly, we use \emph{cross-entropy} as our performance index since our targets take on discrete values and it is the optimal performance index for pattern recognition networks that use the \emph{softmax} transfer function in the output layer. 
 
+Two different frameworks will be used to implement the neural network. First, we will use the Neural Network Toolbox, specifically the Neural Network Pattern Recognition Tool (\verb|nprtool|) train, validate, and test our network. We use this framework to start with a simple graphical user interface to quickly ensure our specified network architecture is appropriate and to get baseline performance statistics. Then, we will replicate the analysis in Python to gain practical experience building network architectures in a scripting language. Note that since the goal is practical experience, we will not be leveraging the power of the \emph{scikit-learn} package (\verb|sklearn|) for this exercise. 
 
+Several reference materials will be consulted to obtain sufficient background knowledge of the subject at hand. First, we plan on doing a thorough review of the forensic chemistry and geology literature to understand the reasons for using physicochemical properties to classify glass. Then, papers on glass analysis will be examined to supplement background knowledge with experiential knowledge. 
+
+Considering our problem is one of pattern recognition, a confusion matrix will be used to assess the accuracy of our model and the \emph{false postive} (Type I error) and \emph{false negative} (Type II error) rates. Further, the \emph{Receiver Operating Characteristic (ROC) curve} will be used to compare the true positive rate to the false positive rate. This will help us gain additional knowledge of the predictive power of our network. 
+
+We plan to finish our research and submit it by Wednesday, June 28, 2017. 
 
 \section{Literature Review}
 \label{sec2}
