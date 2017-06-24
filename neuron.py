@@ -150,7 +150,7 @@ def main():
 
         # create input matrix from training dataset with number of columns to match neurons
         input = np.matrix(train.iloc[epoch,:-1])
-        input = np.concatenate([input]*num_neurons1)
+        #input = np.concatenate([input]*num_neurons1)
         input = np.transpose(input)
 
         # first layer
