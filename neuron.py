@@ -92,12 +92,21 @@ def main():
         # calculate error of each iteration (e = t - a)
         e = target(p_sample) - a2
 
-        # Need to update these with correct deriviatives for the learning rule
+        # create jacobian matrix of layer 2 transfer function derivative
+        # softmax uses off-diagonral values so iteration required to create matrix
+        F2_prime = np.empty([num_neurons2, num_neurons2])
+        for i in range(num_neurons2):
+            for j in range(num_neurons2):
+                if i == j:
+                    F2_prime[i, j] = a2[i] * np.sum(a2 - a2[i])
+                else:
+                    F2_prime[i, j] = -a2[i] * a2[j]
         # calculate layer 2 sensitivity s2 = -2*F2'(n2)*(e)
-        s2 = -2*1*e
+        s2 = -2*F2_prime*e
+
+        # create jacobian matrix of first layer transfer function derivative
+        F1_prime = np.diag(np.ones(num_neurons1)) - np.diagflat(np.power(a1, 2))
         # calculate layer 1 sensitivity s1 = F1'(n1)*W2t*s2
-        # create matrix of first layer transfer function derivative
-        F1_prime = np.multiply(np.diag(np.ones(num_neurons1)) - np.diagflat(a1),np.diagflat(a1))
         s1 = F1_prime * np.transpose(W2) * s2
 
         # calculate new weight and bias for layer 2
