@@ -148,8 +148,13 @@ def main():
     # training & validation
     for epoch in range(iterations):
 
+        # create input matrix from training dataset with number of columns to match neurons
+        input = np.matrix(train.iloc[epoch,:-1])
+        input = np.concatenate([input]*num_neurons1)
+        input = np.transpose(input)
+
         # first layer
-        neuron1 = Neuron(input=train.iloc[epoch,:-1],weight=W1,bias=b1)
+        neuron1 = Neuron(input=input,weight=W1,bias=b1)
         a1 = neuron1.tangsig()
         # second layer
         neuron2 = Neuron(input=a1,weight=W2,bias=b2)
