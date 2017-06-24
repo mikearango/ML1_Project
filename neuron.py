@@ -130,13 +130,13 @@ def main():
     train, validate, test = split(glass, t=0.7, v=0.15)
 
     # specify number of neurons in each layer and the learning rate
-    num_neurons1 = 10
+    num_neurons1 = 2
     num_neurons2 = 2
     alpha = 0.2
     iterations = 100
 
     # initialize weight and bias randomly for each layer from -0.5 to 0.5
-    W1 = np.matrix(np.random.rand(num_neurons1,1) - 0.5)
+    W1 = np.matrix(np.random.rand(num_neurons1,train.iloc[0,:-1].count()) - 0.5)
     b1 = np.matrix(np.random.rand(num_neurons1,1) - 0.5)
     W2 = np.matrix(np.random.rand(num_neurons2,num_neurons1) - 0.5)
     b2 = np.matrix(np.random.rand(num_neurons2,1) - 0.5)
@@ -168,8 +168,9 @@ def main():
         W2, b2 = learn(weight_old=W2,bias_old=b2,sensitivity=s2,input=a1,learning_rate=alpha)
         # calculate new weight and bias for layer 1
         W1, b1 = learn(weight_old=W1,bias_old=b1,sensitivity=s1,input=p_sample,learning_rate=alpha)
+        pass
 
-avg_cost_t = np.mean(cost_t)
+    avg_cost_t = np.mean(cost_t)
 
     # test network
     neuron1 = Neuron(input=test,weight=W1,bias=b1)
