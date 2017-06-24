@@ -115,7 +115,7 @@ def split(dataset,t,v):
     test = test.sample(frac=1)
     test.reset_index(inplace=True)
 
-    return train, validate, test
+    return train.iloc[:,1:], validate.iloc[:,1:], test.iloc[:,1:]
 
 def main():
 
@@ -149,7 +149,7 @@ def main():
     for epoch in range(iterations):
 
         # first layer
-        neuron1 = Neuron(input=train[epoch],weight=W1,bias=b1)
+        neuron1 = Neuron(input=train.iloc[epoch,:-1],weight=W1,bias=b1)
         a1 = neuron1.tangsig()
         # second layer
         neuron2 = Neuron(input=a1,weight=W2,bias=b2)
@@ -169,12 +169,14 @@ def main():
         # calculate new weight and bias for layer 1
         W1, b1 = learn(weight_old=W1,bias_old=b1,sensitivity=s1,input=p_sample,learning_rate=alpha)
 
+avg_cost_t = np.mean(cost_t)
+
     # test network
     neuron1 = Neuron(input=test,weight=W1,bias=b1)
     a1 = neuron1.tangsig()
     neuron2 = Neuron(input=a1,weight=W2,bias=b2)
     a2 = neuron2.softmax()
-    
+
 
 if __name__ == '__main__':
     main()
