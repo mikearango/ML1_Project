@@ -5,18 +5,29 @@
 \title{Using a Two-Layer Neural Network and Physicochemical Properties to Classify Glass for Forensic Analysis}
 
 \author{%
-\name{Michael Arango, Mark Barna \& Paul Brewster}}
+\name{Michael Arango}
+\email{mikearango@gwu.edu}
+	\and
+\name{Mark Barna}
+\email{mark.barna@gmail.com}
+	\and
+\name{Paul Brewster}
+\email{pfbrewster@gmail.com}
+}
 
 %\abstract{abstract text goes here...}
 \date{\today}
 \maketitle
+\pagebreak
+\tableofcontents
+\pagebreak
 
 \section{Project Proposal}
 \label{sec1}
 In this study, we will use the physicochemical properties of glass to determine whether or not a given glass sample was taken from a window. This is a fundamental problem in forensic analysis as it is highly unlikely that glass fragments will be found on people unless they have been present at the time glass breaks. Glass analysis is of vital importance in forensic science as it allows us to test if the glass fragment found on a person is the same as the glass at a crime scene. Since glass is made up of several raw materials and certain elements impart specific properties, we can find out a lot about the glass if we analyze the chemical composition.
 
 The dataset we chose for analysis was made available for download from the UCI Machine Learning Repository and was created by the USA Forensic Science Service. There are 214 observations of 9 different features along with 214 targets that specify whether the glass sample came from a window or not. While we would like more data to train a neural network, we believe the dataset is large enough for our purposes. It is difficult to know before we train a neural network if we have enough data, but the amount of data required is directly related to the complexity of the underlying decision boundary we are trying to implement. We won't 
-know how complex the decision boundary we are trying to approximate is until we train the network, but we feel confident using the dataset as many others have used the dataset and found robust results. Several others papers in the literature use much more complex methods than we will employ and have not found the size of the data to be an issue. 
+know how complex the decision boundary we are trying to approximate is until we train the network, but we feel confident using the dataset as many others have used the dataset and found robust results. Several other papers in the literature use much more complex methods than we will employ and have not found the size of the data to be an issue. 
 
 We have chosen a two-layer perceptron network with tangent-sigmoid transfer functions in the hidden layer and \emph{softmax} transfer functions in the output layer. This is a fairly standard network for pattern recognition. Moreover, we will use the \emph{Scaled Conjugate Gradient (SGD)} algorithm to train the network as it is good for pattern recognition problems in which the output layer uses a non-linear transfer function. Since we do not expect the training error to converge to zero, we implement early stopping criteria to prevent overfitting. Lastly, we use \emph{cross-entropy} as our performance index since our targets take on discrete values and it is the optimal performance index for pattern recognition networks that use the \emph{softmax} transfer function in the output layer. 
 
@@ -28,96 +39,39 @@ Considering our problem is one of pattern recognition, a confusion matrix will b
 
 We plan to finish our research and submit it by Wednesday, June 28, 2017. 
 
-\section{Literature Review}
+\section{Introduction}
 \label{sec2}
+An overview of the project and an outline of the report (I like to write intro after I finish a project).
 
-
-
-
-\section{Preparing your manuscript}
+\subsection{Literature Review}
 \label{sec3}
+
+\section{Description of the Dataset}
+\subsection{Inputs}
+\subsection{Targets}
+
+\section{Description of the Network Architecture and Training Algorithm}
+
+\subsection{Network Architecture}
+\subsection{Training Algorith}
+
+\section{Experimental Setup}
+
+\subsection{Data Preprocessing}
+\subsection{Implementation of the Network}
+\subsection{Performance Index}
+
+\section{Results}
+
+\section{Conclusion}
 
 \subsection{General guidelines}
 \label{sec3.1}
-
-\begin{enumerate}
-\item
-\LaTeX\ and \AmS-\LaTeX\ provide a rich set of commands for all common, important
-features of your paper. Use them; avoid definitions and use of custom commands.
-
-\item
-There is no need to redefine any \TeX, \LaTeX\ or \AmS-\LaTeX\ commands.
-
-\item
-Avoid direct formatting for headings cleanly set as section headings.
-
-\item
-Use \LaTeX\ commands for font changes. For example: use \verb+\textbf{phrase}+,
-not \verb+{\bf phrase}+; use \verb+\mathcal{C}+, not \verb+{\cal C}+; etc.
-\end{enumerate}
-
-
-\subsection{How to start with \texttt{ouparticle.cls}}
-\label{sec3.2}
-
-Before you type anything that actually appears in the paper, you need to
-include a \verb+\documentclass{ouparticle}+ command at the very beginning,
-and then the two commands that have to be part of any \LaTeX\ document,
-\verb+\begin{document}+ at the start and \verb+\end{document}+ at the
-end of your paper.
-
-
-\subsection{Document structure}
-\label{sec3.3}
-
-The main structure of your paper is as follows:
-
-\begin{verbatim}
-\documentclass[12pt,...]{ouparticle}
-\usepackage[...]{packages}
-
-\title{...}
-\author{
-    \name{...}
-    \address{...}
-    \email{...}
-        \and
-    \name{...}
-    \address{...}
-    \email{...}
-        \and
-    \name{...}
-    \address{...}
-    \email{...}
-}
-\abstract{...}
-\keywords{...}
-
-\maketitle
-
-\begin{document}
-
-\section{....}
-...
-\subsection{....}
-....
-\end{document}
-\end{verbatim}
-
-
-\subsection{Options}
-\label{sec3.4}
 
 By default, all of the options within \verb+article.cls+ are available
 with this class file. This class file provides the following additional options.
 
 \begin{description}
-\item \textbf{oneline:}
-This option will set your entire manuscript in one line spacing.
-It will not affect the footnote, figure and table environments.
-
-\item \textbf{halfline:}
-This is to set your entire manuscript in half line spacing.
 
 \item \textbf{endnotes:}
 To make all footnotes to endnotes. You may follow the same
@@ -129,54 +83,13 @@ have to be set in your paper.
 This is the default option that numbers the bibliography items;
 this option does nothing with natbib and other packages.
 
-\item \textbf{nonumbib:} For unnumbered bibliography.
 \end{description}
-
-
-\subsection{Front matter}
-\label{sec3.5}
-
-The title of the manuscript is simply specified by using the \verb+\title{text}+ command in
-the same manner as in this sample. Author's information consists of the name of the author
-and the corresponding institutions with addresses, as given in this example. Include an
-electronic mail address if available, inserting it into the \verb+\email{text}+ commands.
-You may follow the same coding if there are more than one author; separate authors with
-\verb+\and+. Please identify the corresponding author with his/her electronic
-mail address by \verb+\thanks{text}+. An abstract for your paper is specified by using
-\verb+\abstract{text}+. A \verb+\keywords{text}+ macro may also be used to indicate keywords for the
-article. Use \verb+\maketitle+ after the abstract and keywords to make the header of your article.
 
 \subsection{Sections and subsections}
 \label{sec3.6}
 
-To begin a new section, give the heading of that section in the \verb+\section{text}+ command.
-A section number is supplied automatically. Use the starred form (\verb+\section*{text}+) of the
-command to suppress the automatic numbering. If you want to be able to make reference to that section,
-then you need to \texttt{label} it (see Section \ref{sec3.14}). You can have sections up to
-five levels. The sectioning commands are \verb|\section|, \verb|\subsection|, \verb|\subsubsection|,
-\verb|\paragraph| and \verb|\subparagraph|.
-
-\subsection{Ordinary text}
-\label{sec3.7}
-
-The ends of words and sentences are marked by spaces. It does not matter how many
-spaces you type. The end of a line counts as a space. One
-or more blank lines denote the end of a paragraph.
-
-There are a number of things for which you need to follow different
-methods. As you know, quotation marks, quotes within quotes,
-dashes, ellipsis, etc. should be as per the \LaTeX\ standard input. \LaTeX\ interprets some
-common characters as commands, and therefore you must instead type those common characters as
-specific \LaTeX\ commands to generate them. Those characters are \$, \&, \%, \#, \{, and \}.
-
-\subsection{Formatting}
-\label{sec3.8}
-
-One should always use \LaTeX\ macros rather than the lower-level
-\TeX\ macros like \verb+\it+, \verb+\bf+ and \verb+\tt+. The
-\LaTeX\ macros offer much improved features. The following table summarizes the font
-selection commands in \LaTeX.
-
+ If you want to be able to make reference to that section,
+then you need to \texttt{label} it (see Section \ref{sec3.14}). 
 
 \subsubsection*{\LaTeX\ text formatting commands}
 \begin{tabular}{ll@{\hskip60pt}ll}
@@ -186,7 +99,6 @@ selection commands in \LaTeX.
 \verb+\textrm+  & Roman        &\verb+\textnormal+ & Normal Series\\
 \verb+\textsl+  & Slanted      &\verb+\textup+  & Upright Series
 \end{tabular}
-
 
 \subsubsection*{\LaTeX\ math formatting commands}
 \begin{tabular}{ll@{\qquad}ll}
@@ -201,10 +113,6 @@ selection commands in \LaTeX.
 \subsection{Figures and tables}
 \label{sec3.9}
 
-Use normal \LaTeX\ coding for figures and tables.
-Figure and table environments should be inserted after (not in) the paragraph in which
-the figure is first mentioned or grouped all
-together at the end of the file. They will be numbered automatically.
 The following is an example of typesetting a table.
 
 \begin{verbatim}
@@ -219,13 +127,9 @@ As always with \LaTeX, the \verb+\label+ must be after the
 \verb+\caption+, and inside the figure or table environment. The reference for
 figures and tables inside text can be made using the \verb|\ref{key}| command.
 
-
 \subsection{Equations}\label{sec3.10}
 
-Equations are used in the same way as described in the \LaTeX\ manual.
-Do not start a paragraph with a displayed equation. Equations are numbered consecutively, with equation numbers
-in parentheses flush right.
- For example, if you type
+For example, if you type
 \begin{verbatim}
 \begin{equation}\label{eq1}
 \int^{r_2}_0 F(r,\varphi){\rm d}r\,{\rm d}\varphi = [\sigma r_2/(2\mu_0)]
@@ -238,47 +142,6 @@ then you will get the following output:
 \int^{r_2}_0 F(r,\varphi){\rm d}r\,{\rm d}\varphi = [\sigma r_2/(2\mu_0)]\int^{\infty}_0
 \exp(-\lambda|z_j-z_i|)\lambda^{-1}J_1 (\lambda r_2)J_0 (\lambda r_i\,\lambda {\rm d}\lambda)
 \end{equation}
-It inserts space both above and below the equation. \AmS-\LaTeX{} has several environments that
-make it easier to typeset complicated multiline displayed equations. These are explained in the
-\AmS-\LaTeX{} User Guide. A \verb+subequation+ environment is available to create equations with
-sub-numbering of the equation counter. It takes one (optional)
-argument to specify the way that the sub-counter should appear.
-
-
-\subsection{Displayed text}
-\label{sec3.11}
-
-Text is displayed by indenting it from the left and right margins.
-Quotations are commonly displayed. There are short
-quotations:
-\begin{quote}
-   This is a short quotation.  It consists of a
-   single paragraph of text.  See how it is formatted.
-\end{quote}
-and longer ones:
-\begin{quotation}
-   This is a longer quotation.  It consists of two
-   paragraphs of text, neither of which are
-   particularly interesting.
-
-   This is the second paragraph of the quotation.  It
-   is just as dull as the first paragraph.
-\end{quotation}
-You can even display poetry.
-\begin{verse}
-   There is an environment
-    for verse \\             % The \\ command separates lines
-   Whose features some poets % within a stanza.
-   will curse.
-
-                             % One or more blank lines separate stanzas.
-
-   For instead of making\\
-   Them do \emph{all} line breaking, \\
-   It allows them to put too many words on a line when they'd rather be
-   forced to be terse.
-\end{verse}
-
 
 \subsection{Listings}
 \label{sec3.12}
@@ -309,94 +172,9 @@ following is an example of an \emph{itemized} list.
 \end{itemize}
 
 
-\subsection{Displayed sentences: theorems and such}
-\label{sec3.13}
+\pagebreak
 
-These environments have to be defined with the help of \LaTeX's \verb+\newtheorem+ command, and
-also with the \AmS-\LaTeX\ package for theorems that is already with your class file.
-For example, \verb+\newtheorem{thm}{Theorem}+. Predefined theorem styles can be used in your article
-to differentiate the theorem-like environments. You can have an extra command, \verb+\newproof+,
-that can be used for displayed text. The following is an example of using the above-defined
-\verb+thm+ environment.
-\begin{verbatim}
-\begin{thm}
-This is body matter for this environment.
-\end{thm}
-\end{verbatim}
-
-\subsection{Cross-referencing}
-\label{sec3.14}
-
-\LaTeX\ possesses features for labelling and cross-referencing
-section headings, equations, tables, figures and theorems.
-Their proper usage in the context of section headings, equations,
-tables and figures are discussed in the appropriate sections.
-
-Cross-referencing depends upon the use of `keys' that are defined by the user.
-The \verb+\label{key}+ command is used to identify the links. Keys are strings of
-characters that serve to label section headings, equations, tables and figures
-that replace explicit, by-hand numbering. The \verb+\ref{key}+ command is used for
-cross-referencing.
-
-Files that use cross-referencing (and almost all manuscripts do)
-need to be processed through \LaTeX\ at least twice to
-ensure that the keys have been properly linked to the appropriate numbers.
-
-\subsection{Footnotes and endnotes}
-\label{sec3.15}
-
-The footnote text can either appear at the bottom of a page or at the end of your paper.
-The \verb+\footnote+ macro \emph{should not} be used in the front matter to provide additional
-information about authors (such as corresponding addresses); instead, use \verb+\thanks{text}+ commands.
-The document option `\texttt{endnotes}' is used to make endnotes. The command \verb+\theendnotes+ should
-be used to place the endnotes at the required location in the text. They will be put in a separate
-`Notes' section.
-
-
-\subsection{Appendix}
-\label{sec3.16}
-
-The \verb+\appendix+ command signals that all following sections are
-appendices, and therefore the headings after \verb+\appendix+ will be set
-as appendix headings. For a single appendix, use \verb+\appendix*+ followed by the \verb+\section{text}+
-command to suppress the appendix letter in the section heading.
-
-
-\subsection{Special sections for notes and acknowledgements}
-\label{sec3.17}
-
-If you wish to include a `Notes' or `Acknowledgements' section in your paper,
-use the \verb+\begin{notes}...\end{notes}+ macro. We use the same environment for both
-`Notes' and `Acknowledgements'. The following examples show to how to use this macro.
-\begin{verbatim}
-\begin{notes}
-Please note that this class file is provided as it is, and
-copyright by Oxford University Press. You are free to use this
-class file, provided that you do not make changes in this class file.
-If you do make changes, you are requested to rename the class file.
-\end{notes}
-
-\begin{notes}[Acknowledgements]
-The authors would like to thank...
-\end{notes}
-
-\end{verbatim}
-
-
-\subsection{References}
-\label{sec3.18}
-
-The reference entries can be \LaTeX\ typed bibliographies or generated through a BIB\TeX\ database.
-BIB\TeX\ is an adjunct to \LaTeX\ that aids in the preparation of bibliographies. BIB\TeX\
-allows authors to build up a database or collection of bibliography entries that may be used for many
-manuscripts. They also save us the trouble of having to specify formatting. More details can be found
-in the \textit{BIB\TeX\ Guide}. For \LaTeX\ reference entries use the
-\verb+\begin{thebibliography}....\end{thebibliography}+ environment (see below) to make references in your paper.
-We have provided the class file option to distinguish two styles of references. Those options are \verb+numbib+ and \verb+nonumbib+.
-You can select one of these options with the \verb+\documentclass+ command. By default the class file will take the
-\verb+numbib+ option. The following is an example of \LaTeX\ bibliography.
-
-\begin{verbatim}
+\addcontentsline{toc}{section}{References}
 \begin{thebibliography}{0}
 \bibitem{bib1}
 Goossens, M., F. Mittelbach, and A. Samarin: {\em The {\LaTeX} Companion}.
@@ -410,28 +188,13 @@ Guide and Reference Manual}. Addison-Wesley, Reading, MA, USA, 1985.
 Smith, I.N., R.S. Johnes, and W.P. Hines: 1992, `Title of the Article',
 \textit{Journal Title in Italics} \textbf{Vol. no. X}, pp. 00--00
 \end{thebibliography}
-\end{verbatim}
 
+\pagebreak
+\appendix
 
-\section{Macro packages}
-\label{sec4}
+\section{Perceptron}
+\section{Backprop}
+\section{Subroutine X}
 
-The following packages are compulsorily needed by the class file:
-\begin{verbatim}
-amsmath         graphicx
-amssymb         endnotes
-amsfonts        setspace
-verbatim        geometry
-\end{verbatim}
-
-The commonly used packages already used by this class file that authors can use whenever required are:
-\begin{verbatim}
-xspace          latexsym        url
-amscd           multicol        algorithm
-rotating        array           subfigure
-\end{verbatim}
-
-Additionally, you can use other packages and these should be loaded
-using the \verb+\usepackage+ command.
 
 \end{document}
