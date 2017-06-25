@@ -85,8 +85,12 @@ def learn(weight_old, bias_old, sensitivity, input, learning_rate):
     bias_new = bias_old - learning_rate * sensitivity
     return  weight_new, bias_new
 
-# split dataset into training, validation, testing sets
+# normailize data and split dataset into training, validation, testing sets
 def split(dataset,t,v):
+    # normalize dataset into range between -1 and 1
+    norm = dataset.ix[:, :-2].apply(lambda x: -1 + 2 * (x - x.min()) / (x.max() - x.min()), axis=0)
+    dataset = pd.concat([norm,dataset.ix[:,-2:]],axis=1)
+
     # split dataset by target class
     dataset0 = dataset.ix[dataset.ix[:,'window']==0,:]
     dataset1 = dataset.ix[dataset.ix[:,'window']==1,:]
