@@ -19,6 +19,24 @@
 
 \refsection{0}
   \sortlist{ynt}{ynt}
+    \entry{evett1987}{article}{}
+      \name{author}{2}{}{%
+        {{hash=4d4f89184e7c539e64a7beed10775143}{Evett}{E\bibinitperiod}{Ian\bibnamedelima W}{I\bibinitperiod\bibinitdelim W\bibinitperiod}{}{}{}{}}%
+        {{hash=e6991781272e6ed4c1d12c82081647ae}{Spiehler}{S\bibinitperiod}{EJ}{E\bibinitperiod}{}{}{}{}}%
+      }
+      \strng{namehash}{f69b66269e660fa60fb36e8e30c25ebc}
+      \strng{fullhash}{f69b66269e660fa60fb36e8e30c25ebc}
+      \field{labelalpha}{ES87}
+      \field{sortinit}{1}
+      \field{sortinithash}{53e85f4cf497d2a4e1d51786552bcbf1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{KBS in Goverment, Online Publications}
+      \field{title}{Rule Induction In Forensic Science}
+      \field{year}{1987}
+      \field{pages}{107\bibrangedash 118}
+      \range{pages}{12}
+    \endentry
     \entry{murphy1994}{article}{}
       \name{author}{2}{}{%
         {{hash=36537869aae39d6198592915de2f6b30}{Murphy}{M\bibinitperiod}{P.M.}{P\bibinitperiod}{}{}{}{}}%
@@ -35,24 +53,68 @@
       \field{title}{UCI Repository of Machine learning Databases [http://www.ics.uci.edu/~mlearn/MLRepository.html], Department of Information and Computer Science}
       \field{year}{1994}
     \endentry
+    \entry{bottrell2009}{article}{}
+      \name{author}{1}{}{%
+        {{hash=db514acaf8a3a909b02029e5a3faef6e}{Bottrell}{B\bibinitperiod}{Maureen\bibnamedelima C}{M\bibinitperiod\bibinitdelim C\bibinitperiod}{}{}{}{}}%
+      }
+      \list{publisher}{1}{%
+        {Federal Bureau of Investigation}%
+      }
+      \strng{namehash}{db514acaf8a3a909b02029e5a3faef6e}
+      \strng{fullhash}{db514acaf8a3a909b02029e5a3faef6e}
+      \field{labelalpha}{Bot09}
+      \field{sortinit}{2}
+      \field{sortinithash}{8343b463aacf48517c044b4d2c9c45ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Forensic Science Communications}
+      \field{number}{2}
+      \field{title}{Forensic Glass Comparison: Background Information Used in Data Interpretation}
+      \field{volume}{11}
+      \field{year}{2009}
+    \endentry
+    \entry{almirall2012}{article}{}
+      \name{author}{2}{}{%
+        {{hash=582c4fc0b27b3ab94bf6c19c8c628601}{Almirall}{A\bibinitperiod}{Cahoon}{C\bibinitperiod}{}{}{Naes}{N\bibinitperiod}}%
+        {{hash=b8feeabf80bf11d3546ed12b045282e1}{Trejos}{T\bibinitperiod}{}{}{}{}{}{}}%
+      }
+      \list{publisher}{1}{%
+        {Department of Justice}%
+      }
+      \strng{namehash}{29c86e4dd33ed0df8d03d7095f408790}
+      \strng{fullhash}{29c86e4dd33ed0df8d03d7095f408790}
+      \field{labelalpha}{AT12}
+      \field{sortinit}{2}
+      \field{sortinithash}{8343b463aacf48517c044b4d2c9c45ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{National Criminal Justice Reference Series}
+      \field{title}{Elemental Analysis of Glass by SEM-EDS, $\mu$XRF, LIBS and LA-ICP-MS}
+      \field{year}{2012}
+    \endentry
     \entry{hagan2014}{book}{}
       \name{author}{4}{}{%
-        {{hash=bd3c9bfc0dd48b2d105f0a8f85cae0b3}{Demuth}{D\bibinitperiod}{Howard\bibnamedelima B}{H\bibinitperiod\bibinitdelim B\bibinitperiod}{}{}{}{}}%
-        {{hash=9513b026ee59500e0822c22a8935b1e4}{Beale}{B\bibinitperiod}{Mark\bibnamedelima H}{M\bibinitperiod\bibinitdelim H\bibinitperiod}{}{}{}{}}%
+        {{hash=e0626efe431ee44211a21d6d9b57fc1f}{Demuth}{D\bibinitperiod}{Howard\bibnamedelima B.}{H\bibinitperiod\bibinitdelim B\bibinitperiod}{}{}{}{}}%
+        {{hash=56aacdef84a3e7e8ba37eb3ca09fa542}{Beale}{B\bibinitperiod}{Mark\bibnamedelima H.}{M\bibinitperiod\bibinitdelim H\bibinitperiod}{}{}{}{}}%
         {{hash=84f7338cf48e08fe9abcfcc733b7137f}{De\bibnamedelima Jess}{D\bibinitperiod\bibinitdelim J\bibinitperiod}{Orlando}{O\bibinitperiod}{}{}{}{}}%
-        {{hash=369ebff8428b4914976aa94e121409bb}{Hagan}{H\bibinitperiod}{Martin\bibnamedelima T}{M\bibinitperiod\bibinitdelim T\bibinitperiod}{}{}{}{}}%
+        {{hash=10c7e3aa4f5c691ceeed7d70e4709e33}{Hagan}{H\bibinitperiod}{Martin\bibnamedelima T.}{M\bibinitperiod\bibinitdelim T\bibinitperiod}{}{}{}{}}%
+      }
+      \list{location}{1}{%
+        {USA}%
       }
       \list{publisher}{1}{%
         {Martin Hagan}%
       }
-      \strng{namehash}{a27c931c8d3519f6af6ba27ffa8e54c0}
-      \strng{fullhash}{6f9625cb47ecafc91fc263c5c067cd15}
+      \strng{namehash}{7ebaa223015a05573bff245a973155b1}
+      \strng{fullhash}{bf87ad1fe34b864cc77263fed87ab90a}
       \field{labelalpha}{Dem+14}
       \field{sortinit}{2}
       \field{sortinithash}{8343b463aacf48517c044b4d2c9c45ed}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Neural network design}
+      \field{edition}{2nd}
+      \field{isbn}{0971732116, 9780971732117}
+      \field{title}{Neural Network Design}
       \field{year}{2014}
     \endentry
   \endsortlist

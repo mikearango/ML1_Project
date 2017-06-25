@@ -2231,10 +2231,13 @@
     <bcf:datasource type="file" datatype="bibtex">paper.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1">murphy1994</bcf:citekey>
-    <bcf:citekey order="2">hagan2014</bcf:citekey>
-    <bcf:citekey order="3">hagan2014</bcf:citekey>
-    <bcf:citekey order="4">hagan2014</bcf:citekey>
+    <bcf:citekey order="1">evett1987</bcf:citekey>
+    <bcf:citekey order="2">almirall2012</bcf:citekey>
+    <bcf:citekey order="3">bottrell2009</bcf:citekey>
+    <bcf:citekey order="4">murphy1994</bcf:citekey>
+    <bcf:citekey order="5">hagan2014</bcf:citekey>
+    <bcf:citekey order="6">hagan2014</bcf:citekey>
+    <bcf:citekey order="7">hagan2014</bcf:citekey>
   </bcf:section>
   <bcf:sortlist section="0" name="ynt" type="entry" sortscheme="ynt">
   <bcf:sorting>

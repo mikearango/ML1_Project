@@ -54,13 +54,25 @@ We plan to finish our research and submit it by Wednesday, June 28, 2017.
 An overview of the project and an outline of the report (I like to write intro after I finish a project).
 
 \subsection{Literature Review}
-\label{sec3}
+\label{sec2.1}
+The dataset we will use for this analysis was initially employed in Evett and Spiehler's paper \emph{Rule Induction in Forensic Science} (1987) \cite{evett1987}. They recognized the usefulness to a forensic crime lab of classifying glass fragments based on refractive index and chemical composition. This would, for example, allow the lab to ascertain whether samples gathered on a suspect?s clothing came from a window, potentially indicating they had broken it, or from another source, like a broken bottle. 
+
+In their experiment, Evett and Spiehler wished to see if the Bionic Evolutionary Algorithm Generating Logical Expressions (BEAGLE) machine learning algorithm could correctly classify the glass---first as either window or non-window, and then into a second level of sub-categories. Our project focuses on the former and leaves the latter as a future exercise. The BEAGLE algorithm Evett and Spiehler used to train the network uses a series of logical ``and'' statements to chain rules together based on the inputs. They offer up the following example of a rule: 
+\[ 
+\{(\mathrm{Fe} \leq \mathrm{Na}) \text{ and } [\mathrm{K} > (\mathrm{Fe} \cdot 650)]\}, 
+\]
+where $\mathrm{Fe}$, $\mathrm{Na}$, and $\mathrm{K}$ are the percent composition of iron, sodium, and potassium, respectively, of each glass sample. Evett and Spiehler found that the BEAGLE algorithm outperformed the $k$-Nearest Neighbors algorithm (with $ k = 3$) and Linear Discriminant Analysis (LDA)---the models they used for baseline performance measures. 
+
+The Department of Justice regularly issues research grants for the elemental analysis of glass. In 2012, they issued one such grant to researchers at Florida International University (FIU) to work with the Miami-Dade County Police Department \cite{almirall2012}. The researchers note that analysis of small quantities of materials has become an important yet underutilized type of evidence at many crime scenes including hit-and-run accidents and other violent crimes. The ability to classify different types of glass could be of vital importance in the case of a hit-and-run. Further, the group of researchers attempted to compare the discrimination power between the methods used in most forensic laboratories for glass analysis. Their aim was to create a more ``standard'' method that can be used by the operational forensic laboratory and a ``match criteria'' for use in routine casework situations.
+
+Maureen Bottrell, a geologist and forensic scientist at the FBI Laboratory released a report in 2009 documenting the background information that ought to be used when comparing glass samples with data \cite{bottrell2009}. She notes that the vast majority of raw materials used to make glass are derived geologically and that North American glass makers use more than 20 million tons of raw materials annually. All of these materials contain several impurities that result in perceived differences in glass products. Bottrell writes that physical properties such as color, curvature, fluorescence, thickness, and surface features should first be used to determine if the material fragments are glass. Once we know a sample is glass, Bottrell recommends using optical properties, particle immersion, density, and elemental analysis to differentiate between types of glass. In this study, we focus on optical properties, specifically the refractive index, and elemental analysis to classify whether glass samples came from a window or not.\footnote{See section \ref{sec3.1} for more on the refractive index.}Since glass is made up of several raw materials and certain elements impart specific properties, we can find out a lot about the glass if we analyze the chemical composition. Glass made on the same manufacturing line over a period of time can often have highly variable properties as mixtures of raw materials can have drastically different chemical compositions. 
 
 \section{Description of the Dataset}
-\label{sec4}
+\label{sec3}
 The dataset was made available for download from the UCI Machine Learning Repository and was created by the USA Forensic Science Service \cite{murphy1994}. The purpose of this dataset is to use physicochemical properties to classify whether a certain glass fragment comes from a window or not. 
 
 \subsection{Inputs}
+\label{sec3.1}
 The matrix of inputs contains 214 observations of 9 variables and there is no missing data. Of these variables, eight of the nine measure the percent weight that a given elemental oxide makes up of the total glass sample weight. All the eight elements except silicon are classified as metals on the periodic table of elements. Sodium and potassium are alkali metals whereas magnesium, calcium, and barium alkaline earth metals. Aluminum and iron are classified as poor metals and transition metals, respectively. The last variable in the input matrix represents the refractive index which measures the speed of light in a transparent medium and is known as Snell's law. It can be represented formulaically as the ratio of the velocity of light in a vacuum to the velocity of light in the glass itself: $n = \frac{c}{v}$. A more thorough description of target variables is as follows: 
 \begin{description}
 \item \textbf{Refractive Index:}
@@ -84,12 +96,15 @@ represents the percent weight in iron oxide ($\mathrm{Fe_{2}O_{3}}$)
 \end{description}
 
 \subsection{Targets}
+\label{sec3.2}
 The matrix of targets has 214 observations, one for each observation in the training set, where a given target is denoted by $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$ if the glass sample comes from a window and $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ otherwise. Note that the targets are two-dimensional instead of the more common one-dimensional binary encoding. This two-dimensional encoding allows us to have only one neuron firing at a time and tends to result in marginally better performance. 
 
 \section{Description of the Network Architecture and Training Algorithm}
+\label{sec4}
 Once the data is preprocessed, the next step is to decide on or create a network architecture. The basic network architecture is determined by the problem we wish to solve. Once the basic network architecture is determined, we decide how many layers, how many neurons in each layer, how many outputs the network should have, and what kind of performance index function we should use for training \cite{hagan2014}. 
 
 \subsection{Network Architecture}
+\label{sec4.1}
 The standard neural network architecture for pattern recognition problems is the multi-layer perceptron with tangent-sigmoid transfer functions in the hidden layers and \emph{softmax} transfer functions in the output layer. For most problems, including a fairly simple one like ours, one hidden layer usually suffices. Thus, we will implement a two-layer perceptron. If the results of the network are unsatisfactory after training and testing with one hidden layer, we will retrain with an additional hidden layer, but we do not anticipate having to do this. The \emph{tansig} transfer function is usually preferred to the \emph{logsig} transfer function in the hidden layers since it produces outputs (which are inputs to the next layer) that are centered near zero, whereas the \emph{logsig} transfer function always produces positive outputs. 
 
 We also need to select the number of neurons in each layer. The number of neurons we use in the output layer should be the same as the size of the target vector. In our case, this means we should use two neurons in the output layer. On the other hand, the number of neurons we use in the hidden layer is directly proportional to the the complexity of the decision boundary being implemented. Since we do not know the complexity of the decision boundary needed to classify these glass samples before training, we begin with ten neurons, which may be more than we need, and leverage early stopping techniques to prevent overfitting \cite{hagan2014}. 
@@ -100,97 +115,50 @@ Now that we have chosen a network architecture, we can calculate the network out
 \] 
 while the output from the output layer is 
 \[ 
-\mathbf{a^{2}} = \textbf{logsig}(\mathbf{W^{2}}\mathbf{a^{1}} + \mathbf{b^{2}}). 
+\mathbf{a^{2}} = \textbf{softmax}(\mathbf{W^{2}}\mathbf{a^{1}} + \mathbf{b^{2}}). 
 \]
-The network architecture can be seen in \emph{Figure 1} below. 
+The network architecture can be seen in \textbf{Figure 1} below. 
 \begin{figure}[H]
 \includegraphics[width = 6in]{figs/network.png}
 \caption{Two-Layer Perceptron Used to Classify Glass Samples}
 \end{figure}
 
-In the 1950's, Frank Rosenblatt developed the perceptron learning rule for training networks to solve pattern recognition problems. While his developments were monumental at the time, we only implement the perceptron learning rule when the input vectors are \emph{linearly separable}. Widrow and Hoff's learning rule suffered from the same disadvantage. When we have more complicated decision boundaries we are trying to implement and have multiple layers, a more robust learning rule ought to be used. This problem prompted Paul Werbos to derive the backpropagation algorithm in his thesis in the 1970's. Since then, multilayer perceptrons trained by the backpropagation algorithm have become the most popular neural network. \cite{hagan2014}. 
+\subsubsection{History of the Perceptron}
+\label{sec4.1.1}
+Before discussing the training algorithm, we offer up a brief history of the perceptron. Much of the modern interpretation of neural networks is credited in large part to Warren McCulloch and Walter Pitts who showed that networks of artificial neurons could calculate any function. We still use the fundamental feature of their model in which a weighted sum of inputs is compared to a threshold to determine the output of a neuron \cite{hagan2014}.
+
+One of the first applications of neural networks came in the 1950's when Frank Rosenblatt developed the perceptron network and the corresponding learning rule to solve pattern recognition problems. While his developments were monumental at the time, several researchers showed that a single-layer perceptron and the learning rule could not solve certain problems. Specifically, the error will never converge to zero when using the perceptron learning rule if the input vectors are \emph{linearly inseparable}. It wasn't until the 1980's that multi-layer perceptron networks and more complex learning rules were proposed that could solve these problems. 
+
+
+%Widrow and Hoff's learning rule suffered from the same disadvantage. When we have more complicated decision boundaries we are trying to implement and have multiple layers, a more robust learning rule ought to be used. Since then, multilayer perceptrons trained by the backpropagation algorithm have become the most popular neural network. \cite{hagan2014}. 
 
 \subsection{Training Algorithm}
-We chose to use the Scaled Conjugate Gradient (SCG) algorithm to train our network as it is very efficient for pattern recognition problems. For multi-layer networks, the Levenberg-Marquardt algorithm is often used, but it does not work well for pattern recognition as the transfer function in the output layer is operating outside the linear region. The scaled conjugate gradient algorithm is a special type of backpropagation. In backpropagation, we adjust the weights in the direction of steepest descent 
+\label{sec4.2}
+%We chose to use the Scaled Conjugate Gradient (SCG) algorithm to train our network as it is very efficient for pattern recognition problems. For multi-layer networks, the Levenberg-Marquardt algorithm is often used, but it does not work well for pattern recognition as the transfer function in the output layer is operating outside the linear region. The scaled conjugate gradient algorithm is a special type of backpropagation. In backpropagation, we adjust the weights in the direction of steepest descent... 
 
 
 \section{Experimental Setup}
+\label{sec5}
 
 \subsection{Data Preprocessing}
+\label{sec5.1}
+
 \subsection{Implementation of the Network}
+\label{sec5.2}
+
 \subsection{Performance Index}
+\label{sec5.3}
 
 \section{Results}
+\label{sec6}
 
 \section{Conclusion}
-
-
-\section{Figures and tables}
-\label{sec3.9}
-
-The following is an example of typesetting a table.
-
-\begin{verbatim}
-\begin{table}
-\caption{Table caption text.}
-\label{key}
-The table matter goes here.
-\end{table}
-\end{verbatim}
-
-As always with \LaTeX, the \verb+\label+ must be after the
-\verb+\caption+, and inside the figure or table environment. The reference for
-figures and tables inside text can be made using the \verb|\ref{key}| command.
-
-\subsection{Equations}\label{sec3.10}
-
-For example, if you type
-\begin{verbatim}
-\begin{equation}\label{eq1}
-\int^{r_2}_0 F(r,\varphi){\rm d}r\,{\rm d}\varphi = [\sigma r_2/(2\mu_0)]
-\int^{\infty}_0\exp(-\lambda|z_j-z_i|)\lambda^{-1}J_1 (\lambda r_2)J_0
-(\lambda r_i\,\lambda {\rm d}\lambda)
-\end{equation}
-\end{verbatim}
-then you will get the following output:
-\begin{equation}\label{eq1}
-\int^{r_2}_0 F(r,\varphi){\rm d}r\,{\rm d}\varphi = [\sigma r_2/(2\mu_0)]\int^{\infty}_0
-\exp(-\lambda|z_j-z_i|)\lambda^{-1}J_1 (\lambda r_2)J_0 (\lambda r_i\,\lambda {\rm d}\lambda)
-\end{equation}
-
-\subsection{Listings}
-\label{sec3.12}
-
-Another frequently displayed structure is a list. The
-following is an example of an \emph{itemized} list.
-\begin{itemize}
-   \item This is the first item of an itemized list.
-         Each item in the list is marked with a
-         `$\bullet$'.
-
-   \item This is the second item of the list. It
-         contains another list nested inside it. The
-         inner list is an \emph{enumerated} list.
-         \begin{enumerate}
-            \item This is the first item of an enumerated
-                  list that is nested within the
-                  itemized list.
-
-            \item This is the second item of the inner list.
-                  \LaTeX\ allows you to nest lists
-                  deeper than you really should.
-         \end{enumerate}
-         This is the rest of the second item of the
-         outer list. It is no more interesting than
-         any other part of the item.
-   \item This is the third item of the list.
-\end{itemize}
+\label{sec7}
 
 
 \pagebreak
 
 \printbibliography[heading=bibintoc, title={References}]
-
 
 \pagebreak
 \appendix
