@@ -35,6 +35,26 @@
       \field{title}{UCI Repository of Machine learning Databases [http://www.ics.uci.edu/~mlearn/MLRepository.html], Department of Information and Computer Science}
       \field{year}{1994}
     \endentry
+    \entry{hagan2014}{book}{}
+      \name{author}{4}{}{%
+        {{hash=bd3c9bfc0dd48b2d105f0a8f85cae0b3}{Demuth}{D\bibinitperiod}{Howard\bibnamedelima B}{H\bibinitperiod\bibinitdelim B\bibinitperiod}{}{}{}{}}%
+        {{hash=9513b026ee59500e0822c22a8935b1e4}{Beale}{B\bibinitperiod}{Mark\bibnamedelima H}{M\bibinitperiod\bibinitdelim H\bibinitperiod}{}{}{}{}}%
+        {{hash=84f7338cf48e08fe9abcfcc733b7137f}{De\bibnamedelima Jess}{D\bibinitperiod\bibinitdelim J\bibinitperiod}{Orlando}{O\bibinitperiod}{}{}{}{}}%
+        {{hash=369ebff8428b4914976aa94e121409bb}{Hagan}{H\bibinitperiod}{Martin\bibnamedelima T}{M\bibinitperiod\bibinitdelim T\bibinitperiod}{}{}{}{}}%
+      }
+      \list{publisher}{1}{%
+        {Martin Hagan}%
+      }
+      \strng{namehash}{a27c931c8d3519f6af6ba27ffa8e54c0}
+      \strng{fullhash}{6f9625cb47ecafc91fc263c5c067cd15}
+      \field{labelalpha}{Dem+14}
+      \field{sortinit}{2}
+      \field{sortinithash}{8343b463aacf48517c044b4d2c9c45ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Neural network design}
+      \field{year}{2014}
+    \endentry
   \endsortlist
 \endrefsection
 \endinput

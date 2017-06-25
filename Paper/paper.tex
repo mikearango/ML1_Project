@@ -87,10 +87,32 @@ represents the percent weight in iron oxide ($\mathrm{Fe_{2}O_{3}}$)
 The matrix of targets has 214 observations, one for each observation in the training set, where a given target is denoted by $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$ if the glass sample comes from a window and $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ otherwise. Note that the targets are two-dimensional instead of the more common one-dimensional binary encoding. This two-dimensional encoding allows us to have only one neuron firing at a time and tends to result in marginally better performance. 
 
 \section{Description of the Network Architecture and Training Algorithm}
-
+Once the data is preprocessed, the next step is to decide on or create a network architecture. The basic network architecture is determined by the problem we wish to solve. Once the basic network architecture is determined, we decide how many layers, how many neurons in each layer, how many outputs the network should have, and what kind of performance index function we should use for training \cite{hagan2014}. 
 
 \subsection{Network Architecture}
+The standard neural network architecture for pattern recognition problems is the multi-layer perceptron with tangent-sigmoid transfer functions in the hidden layers and \emph{softmax} transfer functions in the output layer. For most problems, including a fairly simple one like ours, one hidden layer usually suffices. Thus, we will implement a two-layer perceptron. If the results of the network are unsatisfactory after training and testing with one hidden layer, we will retrain with an additional hidden layer, but we do not anticipate having to do this. The \emph{tansig} transfer function is usually preferred to the \emph{logsig} transfer function in the hidden layers since it produces outputs (which are inputs to the next layer) that are centered near zero, whereas the \emph{logsig} transfer function always produces positive outputs. 
+
+We also need to select the number of neurons in each layer. The number of neurons we use in the output layer should be the same as the size of the target vector. In our case, this means we should use two neurons in the output layer. On the other hand, the number of neurons we use in the hidden layer is directly proportional to the the complexity of the decision boundary being implemented. Since we do not know the complexity of the decision boundary needed to classify these glass samples before training, we begin with ten neurons, which may be more than we need, and leverage early stopping techniques to prevent overfitting \cite{hagan2014}. 
+
+Now that we have chosen a network architecture, we can calculate the network output. The output from the hidden layer (the input to the output layer) can be calculated as 
+\[
+\mathbf{a^{1}} = \textbf{logsig}(\mathbf{W^{1}}\mathbf{p} + \mathbf{b^{1}}), 
+\] 
+while the output from the output layer is 
+\[ 
+\mathbf{a^{2}} = \textbf{logsig}(\mathbf{W^{2}}\mathbf{a^{1}} + \mathbf{b^{2}}). 
+\]
+The network architecture can be seen in \emph{Figure 1} below. 
+\begin{figure}[H]
+\includegraphics[width = 6in]{figs/network.png}
+\caption{Two-Layer Perceptron Used to Classify Glass Samples}
+\end{figure}
+
+In the 1950's, Frank Rosenblatt developed the perceptron learning rule for training networks to solve pattern recognition problems. While his developments were monumental at the time, we only implement the perceptron learning rule when the input vectors are \emph{linearly separable}. Widrow and Hoff's learning rule suffered from the same disadvantage. When we have more complicated decision boundaries we are trying to implement and have multiple layers, a more robust learning rule ought to be used. This problem prompted Paul Werbos to derive the backpropagation algorithm in his thesis in the 1970's. Since then, multilayer perceptrons trained by the backpropagation algorithm have become the most popular neural network. \cite{hagan2014}. 
+
 \subsection{Training Algorithm}
+We chose to use the Scaled Conjugate Gradient (SCG) algorithm to train our network as it is very efficient for pattern recognition problems. For multi-layer networks, the Levenberg-Marquardt algorithm is often used, but it does not work well for pattern recognition as the transfer function in the output layer is operating outside the linear region. The scaled conjugate gradient algorithm is a special type of backpropagation. In backpropagation, we adjust the weights in the direction of steepest descent 
+
 
 \section{Experimental Setup}
 
@@ -169,20 +191,6 @@ following is an example of an \emph{itemized} list.
 
 \printbibliography[heading=bibintoc, title={References}]
 
-%\addcontentsline{toc}{section}{References}
-%\begin{thebibliography}{0}
-%\bibitem{bib1}
-%Murphy, P.M., Aha, D.W. (1994): {\em UCI Repository of Machine Learning Databases.} 
-%[http://www.ics.uci.edu/~mlearn/MLRepository.html]. Irvine, CA: University of California, Department of Information and Computer Science.
-%\bibitem{bib2}
-%Knuth, D.E: {\em The {\TeX}book}. Addison-Wesley, Reading, MA, USA, 1984.
-%\bibitem{bib3}
-%Lamport, L.: {\em {\LaTeX} -- A Document Preparation System -- User's
-%Guide and Reference Manual}. Addison-Wesley, Reading, MA, USA, 1985.
-%\bibitem{bib4}
-%Smith, I.N., R.S. Johnes, and W.P. Hines: 1992, `Title of the Article',
-%\textit{Journal Title in Italics} \textbf{Vol. no. X}, pp. 00--00
-%\end{thebibliography}
 
 \pagebreak
 \appendix
