@@ -1,4 +1,14 @@
 \documentclass[12pt,halfline,a4paper]{ouparticle}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\usepackage[nottoc]{tocbibind}
+
+\addbibresource{paper.bib}
 
 \begin{document}
 
@@ -47,8 +57,35 @@ An overview of the project and an outline of the report (I like to write intro a
 \label{sec3}
 
 \section{Description of the Dataset}
+\label{sec4}
+The dataset was made available for download from the UCI Machine Learning Repository and was created by the USA Forensic Science Service \cite{murphy1994}. The purpose of this dataset is to use physicochemical properties to classify whether a certain glass fragment comes from a window or not. 
+
 \subsection{Inputs}
+The matrix of inputs contains 214 observations of 9 variables and there is no missing data. Of these variables, eight of the nine measure the percent weight that a given elemental oxide makes up of the total glass sample weight. All the eight elements except silicon are classified as metals on the periodic table of elements. Sodium and potassium are alkali metals whereas magnesium, calcium, and barium alkaline earth metals. Aluminum and iron are classified as poor metals and transition metals, respectively. The last variable in the input matrix represents the refractive index which measures the speed of light in a transparent medium and is known as Snell's law. It can be represented formulaically as the ratio of the velocity of light in a vacuum to the velocity of light in the glass itself: $n = \frac{c}{v}$. A more thorough description of target variables is as follows: 
+\begin{description}
+\item \textbf{Refractive Index:}
+measures the ratio of the velocity of light in a vacuum to the velocity of light in the glass itself
+\item \textbf{Sodium:}
+represents the percent weight in sodium oxide ($\mathrm{Na_{2}O}$)
+\item \textbf{Magnesium:}
+represents the percent weight in magnesium oxide ($\mathrm{MgO}$)
+\item \textbf{Aluminum:}
+represents the percent weight in aluminum oxide ($\mathrm{Na_{2}O}$)
+\item \textbf{Silicon:}
+represents the percent weight in silicon oxide ($\mathrm{Al_{2}O_{3}}$)
+\item \textbf{Potassium:}
+represents the percent weight in potassium oxide ($\mathrm{K_{2}O}$)
+\item \textbf{Calcium:}
+represents the percent weight in calcium oxide ($\mathrm{Ca_{2}O}$)
+\item \textbf{Barium:}
+represents the percent weight in barium oxide ($\mathrm{Ba_{2}O}$)
+\item \textbf{Iron:}
+represents the percent weight in iron oxide ($\mathrm{Fe_{2}O_{3}}$)
+\end{description}
+
 \subsection{Targets}
+The matrix of targets has 214 observations, one for each observation in the training set, where a given target is denoted by $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$ if the glass sample comes from a window and $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ otherwise. Note that the targets are two-dimensional instead of the more common one-dimensional binary encoding. This two-dimensional encoding allows us to have only one neuron firing at a time and tends to result in marginally better performance. 
+
 
 \section{Description of the Network Architecture and Training Algorithm}
 
@@ -64,50 +101,6 @@ An overview of the project and an outline of the report (I like to write intro a
 \section{Results}
 
 \section{Conclusion}
-
-\subsection{General guidelines}
-\label{sec3.1}
-
-By default, all of the options within \verb+article.cls+ are available
-with this class file. This class file provides the following additional options.
-
-\begin{description}
-
-\item \textbf{endnotes:}
-To make all footnotes to endnotes. You may follow the same
-coding \verb+\footnote{text}+ for both footnotes and endnotes. Once you use this option
-you have to use the \verb+\theendnotes+ command at the place where all the endnotes
-have to be set in your paper.
-
-\item \textbf{numbib:}
-This is the default option that numbers the bibliography items;
-this option does nothing with natbib and other packages.
-
-\end{description}
-
-\subsection{Sections and subsections}
-\label{sec3.6}
-
- If you want to be able to make reference to that section,
-then you need to \texttt{label} it (see Section \ref{sec3.14}). 
-
-\subsubsection*{\LaTeX\ text formatting commands}
-\begin{tabular}{ll@{\hskip60pt}ll}
-\verb+\textit+  & Italics      &\verb+\textsf+  & Sans Serif\\
-\verb+\textbf+  & Boldface     &\verb+\textsc+  & Small Caps\\
-\verb+\texttt+  & Typewriter   &\verb+\textmd+  & Medium Series\\
-\verb+\textrm+  & Roman        &\verb+\textnormal+ & Normal Series\\
-\verb+\textsl+  & Slanted      &\verb+\textup+  & Upright Series
-\end{tabular}
-
-\subsubsection*{\LaTeX\ math formatting commands}
-\begin{tabular}{ll@{\qquad}ll}
-\verb+\mathit+     & Math Italics            &\verb+\mathfrak+   & Fraktur\\
-\verb+\mathbf+     & Math Boldface       &\verb+\mathbb+     & Blackboard Bold\\
-\verb+\mathtt+     & Math Typewriter     &\verb+\mathnormal+ & Math Normal\\
-\verb+\mathsf+     & Math Sans Serif     &\verb+\boldsymbol+ & Bold math for Greek letters\\
-\verb+\mathcal+    & Calligraphic        &                   & and other symbols
-\end{tabular}
 
 
 \subsection{Figures and tables}
@@ -174,20 +167,22 @@ following is an example of an \emph{itemized} list.
 
 \pagebreak
 
-\addcontentsline{toc}{section}{References}
-\begin{thebibliography}{0}
-\bibitem{bib1}
-Goossens, M., F. Mittelbach, and A. Samarin: {\em The {\LaTeX} Companion}.
-Addison-Wesley, Reading, MA, USA, 1994.
-\bibitem{bib2}
-Knuth, D.E: {\em The {\TeX}book}. Addison-Wesley, Reading, MA, USA, 1984.
-\bibitem{bib3}
-Lamport, L.: {\em {\LaTeX} -- A Document Preparation System -- User's
-Guide and Reference Manual}. Addison-Wesley, Reading, MA, USA, 1985.
-\bibitem{bib4}
-Smith, I.N., R.S. Johnes, and W.P. Hines: 1992, `Title of the Article',
-\textit{Journal Title in Italics} \textbf{Vol. no. X}, pp. 00--00
-\end{thebibliography}
+\printbibliography[heading=bibintoc, title={References}]
+
+%\addcontentsline{toc}{section}{References}
+%\begin{thebibliography}{0}
+%\bibitem{bib1}
+%Murphy, P.M., Aha, D.W. (1994): {\em UCI Repository of Machine Learning Databases.} 
+%[http://www.ics.uci.edu/~mlearn/MLRepository.html]. Irvine, CA: University of California, Department of Information and Computer Science.
+%\bibitem{bib2}
+%Knuth, D.E: {\em The {\TeX}book}. Addison-Wesley, Reading, MA, USA, 1984.
+%\bibitem{bib3}
+%Lamport, L.: {\em {\LaTeX} -- A Document Preparation System -- User's
+%Guide and Reference Manual}. Addison-Wesley, Reading, MA, USA, 1985.
+%\bibitem{bib4}
+%Smith, I.N., R.S. Johnes, and W.P. Hines: 1992, `Title of the Article',
+%\textit{Journal Title in Italics} \textbf{Vol. no. X}, pp. 00--00
+%\end{thebibliography}
 
 \pagebreak
 \appendix
@@ -195,6 +190,5 @@ Smith, I.N., R.S. Johnes, and W.P. Hines: 1992, `Title of the Article',
 \section{Perceptron}
 \section{Backprop}
 \section{Subroutine X}
-
 
 \end{document}
