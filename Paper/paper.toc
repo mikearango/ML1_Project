@@ -18,7 +18,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {4.1}Network Architecture}{6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.2}Training Algorith}{6}
+\contentsline {subsection}{\numberline {4.2}Training Algorithm}{6}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {5}Experimental Setup}{6}
 \defcounter {refsection}{0}\relax 
@@ -32,11 +32,11 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {7}Conclusion}{6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {7.1}Figures and tables}{6}
+\contentsline {section}{\numberline {8}Figures and tables}{6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {7.2}Equations}{6}
+\contentsline {subsection}{\numberline {8.1}Equations}{6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {7.3}Listings}{7}
+\contentsline {subsection}{\numberline {8.2}Listings}{7}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{References}{8}
 \defcounter {refsection}{0}\relax 
