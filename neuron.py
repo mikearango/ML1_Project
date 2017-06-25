@@ -42,10 +42,10 @@ class Neuron:
         return a
 
     # softmax derivative jacobian matrix
-    def j_softmax(self,a,n):
-        jacobian = np.empty([n, n])
-        for i in range(n):
-            for j in range(n):
+    def j_softmax(self,a,num):
+        jacobian = np.empty([num, num])
+        for i in range(num):
+            for j in range(num):
                 if i == j:
                     jacobian[i, j] = a[i] * np.sum(a - a[i])
                 else:
@@ -58,20 +58,15 @@ class Neuron:
         return a
 
     # tansig derivative jacobian matrix
-    def j_tansig(self,a,n):
-        jacobian = np.diag(np.ones(n)) - np.diagflat(np.power(a, 2))
+    def j_tansig(self,a,num):
+        jacobian = np.diag(np.ones(num)) - np.diagflat(np.power(a, 2))
         return jacobian
 
-# define error calculation function
-def error_calc(output, target):
-    e = target - output
-    return e
-
 # define cross entropy error calculation function for softmax (assuming targets of 1,0)
-def cross_entropy(a):
-    i = np.where(a == 0)
+def cross_entropy(a,t):
+    i = np.where(a==0)
     a[i] = 1e-15 # replace 0s so ln doesn't produce infinity
-    e = -np.log(a).sum()
+    e = -t * np.log(a)
     return e
 
 # calculate hidden layer sensitivity
@@ -93,8 +88,8 @@ def learn(weight_old, bias_old, sensitivity, input, learning_rate):
 # split dataset into training, validation, testing sets
 def split(dataset,t,v):
     # split dataset by target class
-    dataset0 = dataset.ix[dataset.ix[:,'target']==0,:]
-    dataset1 = dataset.ix[dataset.ix[:,'target']==1,:]
+    dataset0 = dataset.ix[dataset.ix[:,'window']==0,:]
+    dataset1 = dataset.ix[dataset.ix[:,'window']==1,:]
 
     # build datasets by target class
     train0, validate0, test0 = np.split(dataset0.sample(frac=1),
@@ -122,8 +117,13 @@ def main():
     # import dataset
     cols = ['id', 'RI', 'Na', 'Mg', 'Al', 'Si', 'K', 'Ca', 'Ba', 'Fe', 'type']
     glass = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/glass/glass.data', names=cols)
-    glass.ix[glass.ix[:, 'type'] <= 4, 'target'] = 0 # assign 0 to window glass
-    glass.ix[glass.ix[:, 'type'] > 4, 'target'] = 1 # assign 1 to non-window glass
+    # create window target column (1 for true; 0 for false)
+    glass.ix[glass.ix[:, 'type'] <= 4, 'window'] = 1
+    glass.ix[glass.ix[:, 'type'] > 4, 'window'] = 0
+    # create non-window target column (1 for true; 0 for false)
+    glass.ix[glass.ix[:, 'type'] > 4, 'non_window'] = 1
+    glass.ix[glass.ix[:, 'type'] <= 4, 'non_window'] = 0
+    # drop id and class columns
     glass.drop(['id', 'type'], inplace=True, axis=1)
 
     # split into training, validate, testing sets
@@ -136,7 +136,8 @@ def main():
     iterations = 100
 
     # initialize weight and bias randomly for each layer from -0.5 to 0.5
-    W1 = np.matrix(np.random.rand(num_neurons1,train.iloc[0,:-1].count()) - 0.5)
+    # W1 number of columns matches training set columns, less final two
+    W1 = np.matrix(np.random.rand(num_neurons1,train.iloc[0,:-2].count()) - 0.5)
     b1 = np.matrix(np.random.rand(num_neurons1,1) - 0.5)
     W2 = np.matrix(np.random.rand(num_neurons2,num_neurons1) - 0.5)
     b2 = np.matrix(np.random.rand(num_neurons2,1) - 0.5)
@@ -149,7 +150,7 @@ def main():
     for epoch in range(iterations):
 
         # create input matrix from training dataset with number of columns to match neurons
-        input = np.matrix(train.iloc[epoch,:-1])
+        input = np.matrix(train.iloc[epoch,:-2])
         #input = np.concatenate([input]*num_neurons1)
         input = np.transpose(input)
 
@@ -161,13 +162,15 @@ def main():
         a2 = neuron2.softmax()
 
         # calculate error of each iteration and update cost total
-        cost_t.append(cross_entropy(a2))
+        target = np.matrix([train.iloc[epoch,-2:]])
+        e = cross_entropy(a2,target)
+        cost_t.append(e)
 
         # calculate layer 2 sensitivity
-        s2 = senseo(F_prime=neuron2.j_softmax(a=a2,n=num_neurons2),e=e)
+        s2 = senseo(F_prime=neuron2.j_softmax(a=a2,num=num_neurons2),e=e)
 
         # calculate layer 1 sensitivity
-        s1 = senseh(F_prime=neuron1.j_tansig(a=a1,n=num_neurons1),w=W2,s=s2)
+        s1 = senseh(F_prime=neuron1.j_tansig(a=a1,num=num_neurons1),W_1=W2,s_1=s2)
 
         # calculate new weight and bias for layer 2
         W2, b2 = learn(weight_old=W2,bias_old=b2,sensitivity=s2,input=a1,learning_rate=alpha)
