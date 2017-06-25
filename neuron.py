@@ -62,11 +62,18 @@ class Neuron:
         jacobian = np.diag(np.ones(num)) - np.diagflat(np.power(a, 2))
         return jacobian
 
+    # classify output
+    def classify(self,a):
+       c = np.where(a[0]>=0.5,1,0)
+       c = np.asscalar(c)
+       return c
+
 # define cross entropy error calculation function for softmax (assuming targets of 1,0)
 def cross_entropy(a,t):
     i = np.where(a==0)
     a[i] = 1e-15 # replace 0s so ln doesn't produce infinity
     e = -t * np.log(a)
+    #e = - np.multiply(np.transpose(t), np.log(a))
     return e
 
 # calculate hidden layer sensitivity
@@ -136,8 +143,8 @@ def main():
     # specify number of neurons in each layer and the learning rate
     num_neurons1 = 10
     num_neurons2 = 2
-    alpha = 0.05
-    iterations = 25
+    alpha = 0.1
+    iterations = 100
 
     # initialize weight and bias randomly for each layer from -0.5 to 0.5
     # W1 number of columns matches training set columns, less final two
@@ -149,13 +156,19 @@ def main():
     # initialize cross entropy lists for training and validation sets
     ce_t = []
     ce_v = []
+    # initialize validation set indexer
+    index_v = 0
 
     # training & validation
     for epoch in range(iterations):
 
-        # create input matrix from training dataset with number of columns to match neurons
-        input = np.matrix(train.iloc[epoch,:-2])
-        #input = np.concatenate([input]*num_neurons1)
+        # if number of iterations is longer than dataset, loop back to the beginning
+        index = epoch
+        if index >= len(train):
+            index = epoch - len(train)
+
+        # create input matrix from training dataset
+        input = np.matrix(train.iloc[index,:-2])
         input = np.transpose(input)
 
         # first layer
@@ -166,7 +179,7 @@ def main():
         a2 = neuron2.softmax()
 
         # calculate error of each iteration and update cost total
-        target = np.matrix([train.iloc[epoch,-2:]])
+        target = np.matrix(train.iloc[index,-2:])
         e = cross_entropy(a2,target)
         ce_t.append(np.asscalar(e))
         e = np.concatenate([e,e])
@@ -182,18 +195,57 @@ def main():
         # calculate new weight and bias for layer 1
         W1, b1 = learn(weight_old=W1,bias_old=b1,sensitivity=s1,input=input,learning_rate=alpha)
 
+        # run validation check every only on iterations where training set % validation set == 0
+        if index % (len(train)/len(validate)) == 0:
+            if index_v >= len(validate):
+                index_v = 0
+            # create input matrix from validation dataset
+            input = np.matrix(validate.iloc[index_v, :-2])
+            input = np.transpose(input)
+            neuron1 = Neuron(input=input, weight=W1, bias=b1)
+            a1 = neuron1.tangsig()
+            # second layer
+            neuron2 = Neuron(input=a1, weight=W2, bias=b2)
+            a2 = neuron2.softmax()
+            # calculate error and add to cost list
+            target = np.matrix(validate.iloc[index_v, -2:])
+            e = cross_entropy(a2, target)
+            ce_v.append(np.asscalar(e))
 
-    plt.plot(np.arange(0,iterations),ce_t)
+            # increment validation set indexer
+            index_v += 1
+        else:
+            ce_v.append(np.nan)
+
+
+    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=[8, 8])
+    ax.plot(np.arange(0,iterations),ce_t)
+    ax.plot(np.arange(0,len(ce_v)),ce_v,'k.')
     plt.xlabel('epochs')
     plt.ylabel('cross entropy')
+    plt.grid()
     plt.show()
-'''
-    # test network
-    neuron1 = Neuron(input=test,weight=W1,bias=b1)
-    a1 = neuron1.tangsig()
-    neuron2 = Neuron(input=a1,weight=W2,bias=b2)
-    a2 = neuron2.softmax()
 
-'''
+    # initialize confusion matrix series
+    actual = pd.Series(test.iloc[:,-2],name='Actual')
+    predict = []
+
+    # test network
+    for i in range(len(test)):
+        # create input matrix from test dataset
+        input = np.matrix(test.iloc[i, :-2])
+        input = np.transpose(input)
+        neuron1 = Neuron(input=input,weight=W1,bias=b1)
+        a1 = neuron1.tangsig()
+        neuron2 = Neuron(input=a1,weight=W2,bias=b2)
+        a2 = neuron2.softmax()
+        c = neuron2.classify(a2)
+        predict.append(c)
+
+    # generate confusion matrix of test results
+    predict = pd.Series(predict,name='Predicted')
+    confusion = pd.crosstab(actual,predict,margins=True)
+    print confusion
+
 if __name__ == '__main__':
     main()
