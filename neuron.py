@@ -219,11 +219,12 @@ def main():
 
 
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=[8, 8])
-    ax.plot(np.arange(0,iterations),ce_t)
-    ax.plot(np.arange(0,len(ce_v)),ce_v,'k.')
+    ax.plot(np.arange(0,iterations),ce_t,label='Training')
+    ax.plot(np.arange(0,len(ce_v)),ce_v,'k.',label='Validation')
     plt.xlabel('epochs')
     plt.ylabel('cross entropy')
     plt.grid()
+    ax.legend()
     plt.show()
 
     # initialize confusion matrix series
