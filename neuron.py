@@ -42,10 +42,10 @@ class Neuron:
         return a
 
     # softmax derivative jacobian matrix
-    def j_softmax(self,a,n):
-        jacobian = np.empty([n, n])
-        for i in range(n):
-            for j in range(n):
+    def j_softmax(self,a,num):
+        jacobian = np.empty([num, num])
+        for i in range(num):
+            for j in range(num):
                 if i == j:
                     jacobian[i, j] = a[i] * np.sum(a - a[i])
                 else:
@@ -58,8 +58,8 @@ class Neuron:
         return a
 
     # tansig derivative jacobian matrix
-    def j_tansig(self,a,n):
-        jacobian = np.diag(np.ones(n)) - np.diagflat(np.power(a, 2))
+    def j_tansig(self,a,num):
+        jacobian = np.diag(np.ones(num)) - np.diagflat(np.power(a, 2))
         return jacobian
 
 # define cross entropy error calculation function for softmax (assuming targets of 1,0)
@@ -167,10 +167,10 @@ def main():
         cost_t.append(e)
 
         # calculate layer 2 sensitivity
-        s2 = senseo(F_prime=neuron2.j_softmax(a=a2,n=num_neurons2),e=e)
+        s2 = senseo(F_prime=neuron2.j_softmax(a=a2,num=num_neurons2),e=e)
 
         # calculate layer 1 sensitivity
-        s1 = senseh(F_prime=neuron1.j_tansig(a=a1,n=num_neurons1),W_1=W2,s_1=s2)
+        s1 = senseh(F_prime=neuron1.j_tansig(a=a1,num=num_neurons1),W_1=W2,s_1=s2)
 
         # calculate new weight and bias for layer 2
         W2, b2 = learn(weight_old=W2,bias_old=b2,sensitivity=s2,input=a1,learning_rate=alpha)
