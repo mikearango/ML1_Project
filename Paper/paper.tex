@@ -105,13 +105,13 @@ Once the data is preprocessed, the next step is to decide on or create a network
 
 \subsection{Network Architecture}
 \label{sec4.1}
-The standard neural network architecture for pattern recognition problems is the multi-layer perceptron with tangent-sigmoid transfer functions in the hidden layers and \emph{softmax} transfer functions in the output layer. For most problems, including a fairly simple one like ours, one hidden layer usually suffices. Thus, we will implement a two-layer perceptron. If the results of the network are unsatisfactory after training and testing with one hidden layer, we will retrain with an additional hidden layer, but we do not anticipate having to do this. The \emph{tansig} transfer function is usually preferred to the \emph{logsig} transfer function in the hidden layers since it produces outputs (which are inputs to the next layer) that are centered near zero, whereas the \emph{logsig} transfer function always produces positive outputs. 
+The standard neural network architecture for pattern recognition problems is the multi-layer perceptron with tangent-sigmoid transfer functions in the hidden layers and \emph{softmax} transfer functions in the output layer. For most problems, including a fairly simple one like ours, one hidden layer usually suffices. Thus, we will implement a two-layer perceptron. If the results of the network are unsatisfactory after training and testing with one hidden layer, we will retrain with an additional hidden layer, but we do not anticipate having to do this. The \emph{tansig} transfer function is usually preferred to the \emph{tansig} transfer function in the hidden layers since it produces outputs (which are inputs to the next layer) that are centered near zero, whereas the \emph{tansig} transfer function always produces positive outputs. 
 
 We also need to select the number of neurons in each layer. The number of neurons we use in the output layer should be the same as the size of the target vector. In our case, this means we should use two neurons in the output layer. On the other hand, the number of neurons we use in the hidden layer is directly proportional to the the complexity of the decision boundary being implemented. Since we do not know the complexity of the decision boundary needed to classify these glass samples before training, we begin with ten neurons, which may be more than we need, and leverage early stopping techniques to prevent overfitting \cite{hagan2014}. 
 
 Now that we have chosen a network architecture, we can calculate the network output. The output from the hidden layer (the input to the output layer) can be calculated as 
 \[
-\mathbf{a^{1}} = \textbf{logsig}(\mathbf{W^{1}}\mathbf{p} + \mathbf{b^{1}}), 
+\mathbf{a^{1}} = \textbf{tansig}(\mathbf{W^{1}}\mathbf{p} + \mathbf{b^{1}}), 
 \] 
 while the output from the output layer is 
 \[ 
