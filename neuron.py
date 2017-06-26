@@ -38,7 +38,8 @@ class Neuron:
 
     # softmax transfer function a = e^n/sum(e^n)
     def softmax(self):
-        a = np.exp(self.net_input())/np.exp(self.net_input()).sum()
+        #a = np.exp(self.net_input())/np.exp(self.net_input()).sum()
+        a = np.exp(self.net_input()) / np.exp(self.net_input()).sum(axis=0)
         return a
 
     # softmax derivative jacobian matrix
@@ -65,7 +66,6 @@ class Neuron:
     # classify output
     def classify(self,a):
        c = np.where(a[0]>=0.5,1,0)
-       c = np.asscalar(c)
        return c
 
 # define cross entropy error calculation function for softmax (assuming targets of 1,0)
@@ -73,7 +73,6 @@ def cross_entropy(a,t):
     i = np.where(a==0)
     a[i] = 1e-15 # replace 0s so ln doesn't produce infinity
     e = -t * np.log(a)
-    #e = - np.multiply(np.transpose(t), np.log(a))
     return e
 
 # calculate hidden layer sensitivity
@@ -127,7 +126,7 @@ def main():
 
     # import dataset
     cols = ['id', 'RI', 'Na', 'Mg', 'Al', 'Si', 'K', 'Ca', 'Ba', 'Fe', 'type']
-    glass = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/glass/glass.data', names=cols)
+    glass = pd.read_csv('glass.txt', names=cols)
     # create window target column (1 for true; 0 for false)
     glass.ix[glass.ix[:, 'type'] <= 4, 'window'] = 1
     glass.ix[glass.ix[:, 'type'] > 4, 'window'] = 0
@@ -144,7 +143,7 @@ def main():
     num_neurons1 = 10
     num_neurons2 = 2
     alpha = 0.1
-    iterations = 100
+    epoch = 30
 
     # initialize weight and bias randomly for each layer from -0.5 to 0.5
     # W1 number of columns matches training set columns, less final two
@@ -160,93 +159,104 @@ def main():
     index_v = 0
 
     # training & validation
-    for epoch in range(iterations):
+    for j in range(epoch):
 
-        # if number of iterations is longer than dataset, loop back to the beginning
-        index = epoch
-        if index >= len(train):
-            index = epoch - len(train)
+        for i in range(len(train)):
+            # create input matrix from training dataset
+            input = np.matrix(train.iloc[i,:-2])
+            input = np.transpose(input)
 
-        # create input matrix from training dataset
-        input = np.matrix(train.iloc[index,:-2])
+            # first layer
+            neuron1 = Neuron(input=input,weight=W1,bias=b1)
+            a1 = neuron1.tangsig()
+            # second layer
+            neuron2 = Neuron(input=a1,weight=W2,bias=b2)
+            a2 = neuron2.softmax()
+
+            # calculate error of each iteration and update cost total
+            target = np.matrix(train.iloc[i,-2:])
+            e = cross_entropy(a2,target)
+            if i == 0:
+                e_all = e
+            else:
+                e_all = np.concatenate((e_all,e),axis=1)
+            e = np.concatenate([e,e])
+
+            # calculate layer 2 sensitivity
+            s2 = senseo(F_prime=neuron2.j_softmax(a=a2,num=num_neurons2),e=e)
+            if i == 0:
+                s2_all = s2
+            else:
+                s2_all = np.concatenate((s2_all,s2),axis=1)
+
+            # calculate layer 1 sensitivity
+            s1 = senseh(F_prime=neuron1.j_tansig(a=a1,num=num_neurons1),W=W2,s=s2)
+            if i == 0:
+                s1_all = s1
+            else:
+                s1_all = np.concatenate((s1_all, s1), axis=1)
+
+        # append average cross entropy to list
+        ce_t.append(e_all.mean())
+
+        # calculate new weight and bias for layer 2
+        W2, b2 = learn(weight_old=W2,bias_old=b2,sensitivity=s2_all.mean(axis=1),input=a1,learning_rate=alpha)
+        # calculate new weight and bias for layer 1
+        W1, b1 = learn(weight_old=W1,bias_old=b1,sensitivity=s1_all.mean(axis=1),input=input,learning_rate=alpha)
+
+        # validation
+        input = np.matrix(validate.iloc[:, :-2])
         input = np.transpose(input)
 
         # first layer
-        neuron1 = Neuron(input=input,weight=W1,bias=b1)
+        neuron1 = Neuron(input=input, weight=W1, bias=b1)
         a1 = neuron1.tangsig()
         # second layer
-        neuron2 = Neuron(input=a1,weight=W2,bias=b2)
+        neuron2 = Neuron(input=a1, weight=W2, bias=b2)
         a2 = neuron2.softmax()
+        target = np.matrix(validate.iloc[:, -2:])
+        # compute errors
+        for i in range(len(target)):
+            e = cross_entropy(a2[:,i],target[i])
+            if i == 0:
+                e_all = e
+            else:
+                e_all = np.concatenate((e_all,e),axis=1)
 
-        # calculate error of each iteration and update cost total
-        target = np.matrix(train.iloc[index,-2:])
-        e = cross_entropy(a2,target)
-        ce_t.append(np.asscalar(e))
-        e = np.concatenate([e,e])
-
-        # calculate layer 2 sensitivity
-        s2 = senseo(F_prime=neuron2.j_softmax(a=a2,num=num_neurons2),e=e)
-
-        # calculate layer 1 sensitivity
-        s1 = senseh(F_prime=neuron1.j_tansig(a=a1,num=num_neurons1),W=W2,s=s2)
-
-        # calculate new weight and bias for layer 2
-        W2, b2 = learn(weight_old=W2,bias_old=b2,sensitivity=s2,input=a1,learning_rate=alpha)
-        # calculate new weight and bias for layer 1
-        W1, b1 = learn(weight_old=W1,bias_old=b1,sensitivity=s1,input=input,learning_rate=alpha)
-
-        # run validation check every only on iterations where training set % validation set == 0
-        if index % (len(train)/len(validate)) == 0:
-            if index_v >= len(validate):
-                index_v = 0
-            # create input matrix from validation dataset
-            input = np.matrix(validate.iloc[index_v, :-2])
-            input = np.transpose(input)
-            neuron1 = Neuron(input=input, weight=W1, bias=b1)
-            a1 = neuron1.tangsig()
-            # second layer
-            neuron2 = Neuron(input=a1, weight=W2, bias=b2)
-            a2 = neuron2.softmax()
-            # calculate error and add to cost list
-            target = np.matrix(validate.iloc[index_v, -2:])
-            e = cross_entropy(a2, target)
-            ce_v.append(np.asscalar(e))
-
-            # increment validation set indexer
-            index_v += 1
-        else:
-            ce_v.append(np.nan)
-
-
-    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=[8, 8])
-    ax.plot(np.arange(0,iterations),ce_t,label='Training')
-    ax.plot(np.arange(0,len(ce_v)),ce_v,'k.',label='Validation')
-    plt.xlabel('epochs')
-    plt.ylabel('cross entropy')
-    plt.grid()
-    ax.legend()
-    plt.show()
+        # append average validation cross entropy to list
+        ce_v.append(e_all.mean())
+        if j >= 5 and ce_v[j] > ce_v[j-1]:
+            break
 
     # initialize confusion matrix series
-    actual = pd.Series(test.iloc[:,-2],name='Actual')
-    predict = []
+    actual = pd.Series(test.iloc[:, -2], name='Actual')
 
     # test network
-    for i in range(len(test)):
-        # create input matrix from test dataset
-        input = np.matrix(test.iloc[i, :-2])
-        input = np.transpose(input)
-        neuron1 = Neuron(input=input,weight=W1,bias=b1)
-        a1 = neuron1.tangsig()
-        neuron2 = Neuron(input=a1,weight=W2,bias=b2)
-        a2 = neuron2.softmax()
-        c = neuron2.classify(a2)
-        predict.append(c)
+
+    # create input matrix from test dataset
+    input = np.matrix(test.iloc[:, :-2])
+    input = np.transpose(input)
+    neuron1 = Neuron(input=input, weight=W1, bias=b1)
+    a1 = neuron1.tangsig()
+    neuron2 = Neuron(input=a1, weight=W2, bias=b2)
+    a2 = neuron2.softmax()
+    predict = neuron2.classify(a2)
+
 
     # generate confusion matrix of test results
-    predict = pd.Series(predict,name='Predicted')
-    confusion = pd.crosstab(actual,predict,margins=True)
+    predict = pd.Series(predict[0, :], name='Predicted')
+    confusion = pd.crosstab(actual, predict, margins=True)
     print confusion
+
+    # plot error
+    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=[8, 8])
+    ax.plot(np.arange(0,len(ce_t)),ce_t,label='Training')
+    ax.plot(np.arange(0,len(ce_v)),ce_v,label='Validation')
+    ax.set_ylabel('Average Cross Entropy Error')
+    ax.set_xlabel('Number of Batch Iterations')
+    ax.legend()
+    plt.grid()
+    plt.show()
 
 if __name__ == '__main__':
     main()
