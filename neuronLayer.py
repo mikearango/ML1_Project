@@ -110,7 +110,7 @@ def split(dataset, num_inputs, t, v):
     # normalize dataset into range between -1 and 1
 
     norm = dataset.ix[:, slice(0,num_inputs)].apply(lambda x: -1 + 2 * (x - x.min()) / (x.max() - x.min()), axis=0)
-    dataset = pd.concat([norm, dataset.ix[:,'window']], axis=1)
+    dataset = pd.concat([norm, dataset.ix[:,'window':]], axis=1)
 
     # split dataset by target class
     dataset0 = dataset.ix[dataset.ix[:, 'window'] == 0, :]
@@ -161,8 +161,8 @@ def main():
     num_neurons2 = 2
     alpha = 0.1
     epoch = 30
-    neuron1 = NeuronLayer(num_neurons1, num_inputs , tansig, j_tansig)
-    neuron2 = NeuronLayer(num_neurons2, num_neurons1, softmax, j_softmax)
+    nlayer1 = NeuronLayer(num_neurons1, num_inputs , tansig, j_tansig)
+    nlayer2 = NeuronLayer(num_neurons2, num_neurons1, softmax, j_softmax)
 
     # initialize weight and bias randomly for each layer from -0.5 to 0.5
     # W1 number of columns matches training set columns, less final two
@@ -183,20 +183,20 @@ def main():
         for i in range(len(train)):
 
             #set weights and biases
-            neuron1.setWeightBias(w=W1, b=b1)
-            neuron2.setWeightBias(w=W2, b=b2)
+            nlayer1.setWeightBias(w=W1, b=b1)
+            nlayer2.setWeightBias(w=W2, b=b2)
 
             # create input matrix from training dataset
             input = np.matrix(train.iloc[i, slice(0,num_inputs)]).transpose()
 
             # process network
-            neuron1.processInput(input)
-            neuron2.processInput(neuron1.a)
+            nlayer1.processInput(input)
+            nlayer2.processInput(nlayer1.a)
 
 
             # calculate error of each iteration and update cost total
-            target = np.matrix(train.iloc[i, slice(0,num_inputs)])
-            e = cross_entropy(neuron2.a, target)
+            target = np.matrix(train.iloc[i, -2:])
+            e = cross_entropy(nlayer2.a, target)
             if i == 0:
                 e_all = e
             else:
@@ -204,14 +204,14 @@ def main():
             e = np.concatenate([e, e])
 
             # calculate layer 2 sensitivity
-            s2 = senseo(F_prime=j_softmax(a=neuron2.a), e=e)
+            s2 = senseo(F_prime=nlayer2.j(nlayer2.a), e=e)
             if i == 0:
                 s2_all = s2
             else:
                 s2_all = np.concatenate((s2_all, s2), axis=1)
 
             # calculate layer 1 sensitivity
-            s1 = senseh(F_prime=j_tansig(a=neuron1.a), W=W2, s=s2)
+            s1 = senseh(F_prime=nlayer1.j(nlayer1.a), W=W2, s=s2)
             if i == 0:
                 s1_all = s1
             else:
@@ -221,22 +221,22 @@ def main():
         ce_t.append(e_all.mean())
 
         # calculate new weight and bias for layer 2
-        W2, b2 = learn(weight_old=W2, bias_old=b2, sensitivity=s2_all.mean(axis=1), input=neuron1.a, learning_rate=alpha)
+        W2, b2 = learn(weight_old=W2, bias_old=b2, sensitivity=s2_all.mean(axis=1), input=nlayer1.a, learning_rate=alpha)
         # calculate new weight and bias for layer 1
-        W1, b1 = learn(weight_old=W1, bias_old=b1, sensitivity=s1_all.mean(axis=1), input=neuron1.p, learning_rate=alpha)
+        W1, b1 = learn(weight_old=W1, bias_old=b1, sensitivity=s1_all.mean(axis=1), input=nlayer1.p, learning_rate=alpha)
 
         # validation
         input = np.matrix(validate.iloc[:, slice(0,num_inputs)]).transpose()
 
 
         # first layer
-        neuron1.processInput(input)
-        neuron2.processInput(neuron1.a)
+        nlayer1.processInput(input)
+        nlayer2.processInput(nlayer1.a)
 
-        target = np.matrix(validate.iloc[:, slice(0,num_inputs)])
+        target = np.matrix(validate.iloc[:, -2:])
         # compute errors
         for i in range(len(target)):
-            e = cross_entropy(neuron2.a[:, i], target[i])
+            e = cross_entropy(nlayer2.a[:, i], target[i])
             if i == 0:
                 e_all = e
             else:
@@ -248,16 +248,16 @@ def main():
             break
 
     # initialize confusion matrix series
-    actual = pd.Series(test.iloc[:,slice(0,num_inputs)], name='Actual')
+    actual = pd.Series(test.iloc[:, -2], name='Actual')
 
     # test network
 
     # create input matrix from test dataset
     input = np.matrix(test.iloc[:, slice(0,num_inputs)]).transpose()
-    neuron1.processInput(input)
-    neuron2.processInput(neuron1.a)
+    nlayer1.processInput(input)
+    nlayer2.processInput(nlayer1.a)
 
-    predict = classify(neuron2.a)
+    predict = classify(nlayer2.a)
 
     # generate confusion matrix of test results
     predict = pd.Series(predict[0, :], name='Predicted')
