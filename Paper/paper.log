@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  25 JUN 2017 20:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  28 JUN 2017 13:01
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -867,17 +867,17 @@ Package biblatex Info: Reference segment=0 on input line 13.
 
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./pape
 r.toc
-LaTeX Font Info:    Try loading font information for U+msa on input line 9.
+LaTeX Font Info:    Try loading font information for U+msa on input line 11.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 9.
+LaTeX Font Info:    Try loading font information for U+msb on input line 11.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for U+lasy on input line 9.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 11.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
@@ -890,18 +890,18 @@ File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 File: figs/network.png Graphic file (type png)
 
 <use figs/network.png>
-Package pdftex.def Info: figs/network.png used on input line 126.
+Package pdftex.def Info: figs/network.png used on input line 122.
 (pdftex.def)             Requested size: 433.62pt x 116.32103pt.
- [7] [8 <./figs/network.png>] [9] [10] (./paper.aux)
+ [7 <./figs/network.png>] [8] [9] [10] (./paper.aux)
 Package logreq Info: Writing requests to 'paper.run.xml'.
 \openout1 = `paper.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 9633 strings out of 493089
- 153353 string characters out of 6134842
- 584908 words of memory out of 5000000
- 12927 multiletter control sequences out of 15000+600000
+ 9632 strings out of 493089
+ 153345 string characters out of 6134842
+ 585898 words of memory out of 5000000
+ 12926 multiletter control sequences out of 15000+600000
  13875 words of font info for 57 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  44i,8n,49p,950b,1500s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -919,7 +919,7 @@ xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texli
 ve/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texliv
 e/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive
 /2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on paper.pdf (10 pages, 174996 bytes).
+Output written on paper.pdf (10 pages, 174915 bytes).
 PDF statistics:
  96 PDF objects out of 1000 (max. 8388607)
  67 compressed objects within 1 object stream
