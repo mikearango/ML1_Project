@@ -46,33 +46,37 @@ def purelin(n):
 
 # hyperbolic tangent sigmoid transfer function
 def tansig(n):
-    return (2 / (1 + np.exp(-2 * n)) - 1)
-
+    e_pos = np.exp(n)
+    e_neg = np.exp(-n)
+    return (e_pos - e_neg) / (e_pos + e_neg)
 
 # softmax transfer function a = e^n/sum(e^n)
 def softmax(n):
     # a = np.exp(self.net_input())/np.exp(self.net_input()).sum()
-    return np.exp(n) / np.exp(n).sum(axis=0)
+    return np.exp(n) / np.sum(np.exp(n))
 
 # classify output
 def classify(a):
     c = np.where(a[0] >= 0.5, 1, 0)
     return c
 
-
 # tansig derivative jacobian matrix
 def j_tansig(a):
-    jacobian = np.diag(np.ones(a.shape[0])) - np.diagflat(np.power(a, 2))
-    return jacobian
-
+    tg_diags = 1 - np.tanh(a) ** 2
+    tg = np.zeros((a.shape[0], a.shape[0]))
+    np.fill_diagonal(tg, tg_diags)
+    return tg
 
 # softmax derivative jacobian matrix
 def j_softmax(a):
-    jacobian = np.empty([a.shape[0], a.shape[0]])
+    jacobian = np.zeros((a.shape[0], a.shape[0]))
     for i in range(jacobian.shape[0]):
-        for j in range(jacobian.shape[1]):
+        for j in range(jacobian.shape[0]):
             if i == j:
-                jacobian[i, j] = a[i]*np.sum(a-a[i])
+                x = np.zeros((a.shape[0]))
+                for k in range(jacobian.shape[0]):
+                    x[k] = a[k] - a[i]
+                jacobian[i,j] = a[i] * np.sum(x)
             else:
                 jacobian[i, j] = -a[i] * a[j]
     return jacobian
