@@ -5,12 +5,13 @@ import NLObjects as nl
 import DataPrep as dp
 import Split as sp
 
-# normailize data and split dataset into training, validation, testing sets
+# normalize data and split dataset into training, validation, testing sets
+
 
 def main():
     # import dataset
     glass = dp.GlassImport()
-    num_inputs = glass.shape[1] -2
+    num_inputs = glass.shape[1] - 2
     # split into training, validate, testing sets
     train, validate, test = sp.split(glass, num_inputs, t=0.7, v=0.15)
 
@@ -19,7 +20,7 @@ def main():
     num_neurons2 = 2
     alpha = 0.1
     epoch = 30
-    nlayer1 = nl.NeuronLayer(num_neurons1, num_inputs , nl.tansig, nl.j_tansig)
+    nlayer1 = nl.NeuronLayer(num_neurons1, num_inputs, nl.tansig, nl.j_tansig)
     nlayer2 = nl.NeuronLayer(num_neurons2, num_neurons1, nl.softmax, nl.j_softmax)
     np.random.seed(0)
     # initialize weight and bias randomly for each layer from -0.5 to 0.5

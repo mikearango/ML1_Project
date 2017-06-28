@@ -52,7 +52,7 @@ def tansig(n):
 # softmax transfer function a = e^n/sum(e^n)
 def softmax(n):
     # a = np.exp(self.net_input())/np.exp(self.net_input()).sum()
-    return np.exp(n / np.exp(n).sum(axis=0))
+    return np.exp(n) / np.exp(n).sum(axis=0)
 
 # classify output
 def classify(a):
