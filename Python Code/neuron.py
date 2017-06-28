@@ -215,6 +215,7 @@ def main():
         neuron2 = Neuron(input=a1, weight=W2, bias=b2)
         a2 = neuron2.softmax()
         target = np.matrix(validate.iloc[:, -2:])
+        e = cross_entropy(a2,target)
         # compute errors
         for i in range(len(target)):
             e = cross_entropy(a2[:,i],target[i])

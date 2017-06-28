@@ -62,7 +62,7 @@ def classify(a):
 
 # tansig derivative jacobian matrix
 def j_tansig(a):
-    tg_diags = 1 - np.tanh(a) ** 2
+    tg_diags = 1 - np.power(np.tanh(a),2)
     tg = np.zeros((a.shape[0], a.shape[0]))
     np.fill_diagonal(tg, tg_diags)
     return tg
