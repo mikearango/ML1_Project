@@ -33,8 +33,6 @@ def main():
     # initialize cross entropy lists for training and validation sets
     ce_t = []
     ce_v = []
-    # initialize validation set indexer
-    index_v = 0
 
     # training & validation
     nlayer1.setWeightBias(w=W1, b=b1)
