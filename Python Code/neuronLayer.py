@@ -63,6 +63,7 @@ def main():
             else:
                 e_all = np.concatenate((e_all, e), axis=1)
             e = np.concatenate([e, e])
+            #e = np.asscalar(e)
 
             # calculate layer 2 sensitivity
             s2 = nl.senseo(F_prime=nlayer2.j(nlayer2.a), e=e)

@@ -53,11 +53,11 @@ def tansig(n):
 # softmax transfer function a = e^n/sum(e^n)
 def softmax(n):
     # a = np.exp(self.net_input())/np.exp(self.net_input()).sum()
-    return np.exp(n) / np.sum(np.exp(n))
+    return np.exp(n) / np.sum(np.exp(n), axis=0)
 
 # classify output
 def classify(a):
-    c = np.where(a[0] >= 0.5, 1, 0)
+    c = np.where(a[0] >= 0.5, 0, 1)
     return c
 
 # tansig derivative jacobian matrix
@@ -87,6 +87,7 @@ def cross_entropy(a, t):
     i = np.where(a == 0)
     a[i] = 1e-15  # replace 0s so ln doesn't produce infinity
     e = -t * np.log(a)
+    #e = np.matrix([[-t[0,0] * np.log(a[0,0])], [-t[0,1] * np.log(a[1,0])]])
     return e
 
 
