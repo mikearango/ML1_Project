@@ -22,7 +22,7 @@ def main():
     num_neurons1 = 10
     num_neurons2 = 2
     alpha = 0.1
-    epoch = 300
+    epoch = 30
     nlayer1 = nl.NeuronLayer(num_neurons1, num_inputs, nl.tansig, nl.j_tansig)
     nlayer2 = nl.NeuronLayer(num_neurons2, num_neurons1, nl.softmax, nl.j_softmax)
     np.random.seed(0)
@@ -59,7 +59,7 @@ def main():
             e = np.concatenate([e, e])
 
             # calculate layer 2 sensitivity
-            s2 = nl.senseo(F_prime=nlayer2.j(nlayer2.a), t=target, a=nlayer2.f(nlayer2.a))
+            s2 = nl.senseo(t=target, a=nlayer2.f(nlayer2.n))
             if i == 0:
                 s2_all = s2
             else:
@@ -119,7 +119,7 @@ def main():
     # plot error
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=[8, 8])
     ax.plot((np.arange(0, len(ce_t))), ce_t, label='Training')
-    ax.loglog((np.arange(0, len(ce_v))), ce_v, label='Validation')
+    ax.plot((np.arange(0, len(ce_v))), ce_v, label='Validation')
     ax.set_ylabel('Average Cross Entropy Error')
     ax.set_xlabel('Number of Batch Iterations')
     ax.legend()

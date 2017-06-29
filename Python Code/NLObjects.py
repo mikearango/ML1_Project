@@ -52,7 +52,7 @@ def tansig(n):
 
 # softmax transfer function a = e^n/sum(e^n)
 def softmax(n):
-    return np.exp(n) / np.sum(np.exp(n))
+    return np.exp(n) / np.sum(np.exp(n), axis=0)
 
 # classify output
 def classify(a):
@@ -96,8 +96,8 @@ def senseh(F_prime, W, s):
 
 
 # calculate output layer sensitivity
-def senseo(F_prime,t, a):
-    s = F_prime * (a - t)
+def senseo(t, a):
+    s = (a - t)
     return s
 
 # update weights and biases
