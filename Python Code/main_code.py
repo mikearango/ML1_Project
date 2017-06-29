@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import NLObjects as MLP
-from NLObjects import cross_entropy
 from DataPrep import GlassImport
 from Split import split
 # ----------------------------------------------------------------------------------------------------------------------
@@ -54,51 +53,54 @@ p_val = np.asmatrix(p_val)
 target_val = validate.iloc[:, -2:]
 target_val = np.asmatrix(target_val)
 # initialize cross entropy lists for training and validation sets
-e_train = []
-e_val = []
 ce_t = []
 ce_v = []
 # ----------------------------------------------------------------------------------------------------------------------
 # training the network
 # ----------------------------------------------------------------------------------------------------------------------
 for i in range(epoch):
-    s1_train = []
-    s2_train = []
     # ------------------- training set --------------------
     for q in range(len(train)):
-        # propagate the inputs forward
+        # propagate the inputs forward ---------------
         nlayer1.FP(p_train[:, q])
         nlayer2.FP(nlayer1.a)
-        # calculate the error
-        e_train.append(cross_entropy(nlayer2.a, target[q, :]))
-        # backprop
-        s2_train.append(MLP.senseo(nlayer2.j(nlayer2.a), target[q, :].T, nlayer2.f(nlayer2.a)))
-        s1_train.append(MLP.senseh(nlayer1.j(nlayer1.a), nlayer2.w, s2_train[:, q]))
-    # update weight and bias
-    s1_train_epoch = np.mean(s1_train)
-    s2_train_epoch = np.mean(s2_train)
-    nlayer2.update(sensitivity=s2_train_epoch, learning_rate=alpha)  # layer 1
-    nlayer1.update(sensitivity=s1_train_epoch, learning_rate=alpha)  # layer 2
-    ce_t.append(np.mean(e_train))
+        # calculate the error ------------
+        ce = MLP.cross_entropy(nlayer2.a, target[q, :])
+        if i == 0:
+            e_all = ce
+        else:
+            e_all = np.concatenate((e_all, ce), axis=1)
+        ce = np.concatenate([ce, ce])
+        # backprop ----------------
+        # layer 2 sensitivity
+        s2 = MLP.senseo(t=target[q, :], a=nlayer2.f(nlayer2.n))
+        if i == 0:
+            s2_all = s2
+        else:
+            s2_all = np.concatenate((s2_all, s2), axis=1)
+        # layer 1 sensitivity
+        s1 = MLP.senseh(F_prime=nlayer1.j(nlayer1.a), W=W2, s=s2)
+        if i == 0:
+            s1_all = s1
+        else:
+            s1_all = np.concatenate((s1_all, s1), axis=1)
+    # ------------------- update weight and bias ----------------
+    nlayer2.update(sensitivity=s2_all.mean(axis=1), learning_rate=alpha)  # layer 1
+    nlayer1.update(sensitivity=s1_all.mean(axis=1), learning_rate=alpha)  # layer 2
+    ce_t.append(e_all.mean())
     # ------------------- validation set --------------------
-    s1_val = []
-    s2_val = []
-    for k in range(len(validate)):
+    for q in range(len(validate)):
         # propagate the inputs forward
-        nlayer1.FP(p_val[:, k])
+        nlayer1.FP(p_val[:, q])
         nlayer2.FP(nlayer1.a)
-        # calculate the error
-        e_val.append(cross_entropy(nlayer2.a, target_val[k, :]))
-        # backprop
-        s2 = MLP.senseo(nlayer2.j(nlayer2.a), target_val[k, :].T, nlayer2.f(nlayer2.a))
-        s1 = MLP.senseh(nlayer1.j(nlayer1.a), nlayer2.w, s2)
-    # update weight and bias
-    s1_val_epoch = np.mean(s1_val)
-    s2_val_epoch = np.mean(s2_val)
-    nlayer2.update(sensitivity=s2_val_epoch, learning_rate=alpha)  # layer 1
-    nlayer1.update(sensitivity=s1_val_epoch, learning_rate=alpha)  # layer 2
-    # ------------------- calculate epoch Cross Entropy Loss (training & validation) -------------------
-    ce_v.append(np.mean(e_val))
+        # calculate the error ------------
+        ce = MLP.cross_entropy(nlayer2.a, target_val[q, :])
+        if i == 0:
+            e_all = ce
+        else:
+            e_all = np.concatenate((e_all, ce), axis=1)
+        ce = np.concatenate([ce, ce])
+    ce_v.append(e_all.mean())
     # early stopping
     # if i == 0:
     #     val_fail = []
@@ -125,13 +127,13 @@ predict = np.array(predict).flatten()
 # initialize confusion matrix series
 actual = pd.Series(test.iloc[:, -2], name='Actual')
 predict = pd.Series(predict, name='Predicted')
-confusion = pd.crosstab(actual, predict, margins=False)
+confusion = pd.crosstab(actual, predict, margins=True)
 print confusion
 # ------------------- Plot Cross Entropy Loss for Training and Validation Sets -------------
 fig, ax = plt.subplots(ncols=1, nrows=1, figsize=[8, 8])
 ax.plot((np.arange(0, len(ce_t))), np.log(ce_t), label='Training')
 ax.plot((np.arange(0, len(ce_v))), np.log(ce_v), label='Validation')
-ax.set_ylabel('Cross-Entropy Loss')
+ax.set_ylabel('Log Cross-Entropy Loss')
 ax.set_xlabel('Epochs')
 ax.legend()
 plt.grid()

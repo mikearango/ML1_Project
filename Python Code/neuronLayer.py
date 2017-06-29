@@ -10,7 +10,8 @@ import Split as sp
 # ----------------------------------------------------------------------------------------------------------------------
 # Data pre-processing
 # ----------------------------------------------------------------------------------------------------------------------
-# normalize data and split dataset into training, validation, testing sets
+
+
 def main():
     # import dataset
     glass = dp.GlassImport()
@@ -36,6 +37,7 @@ def main():
     # initialize cross entropy lists for training and validation sets
     ce_t = []
     ce_v = []
+    global s1_all, s2_all
     # Initialize weight and bias
     nlayer1.setWeightBias(w=W1, b=b1)
     nlayer2.setWeightBias(w=W2, b=b2)
@@ -45,7 +47,7 @@ def main():
     for j in range(epoch):
         for i in range(len(train)):
             # create input matrix from training dataset
-            input = np.matrix(train.iloc[i, slice(0,num_inputs)]).transpose()
+            input = np.matrix(train.iloc[i, slice(0, num_inputs)]).transpose()
             # process network
             nlayer1.FP(input)
             nlayer2.FP(nlayer1.a)
@@ -81,7 +83,7 @@ def main():
         nlayer1.update(sensitivity=s1_all.mean(axis=1), learning_rate=alpha)
 
         # validation
-        input = np.matrix(validate.iloc[:, slice(0,num_inputs)]).transpose()
+        input = np.matrix(validate.iloc[:, slice(0, num_inputs)]).transpose()
         # first layer
         nlayer1.FP(input)
         nlayer2.FP(nlayer1.a)
@@ -93,35 +95,52 @@ def main():
                 e_all = e
             else:
                 e_all = np.concatenate((e_all, e), axis=1)
-
-        # append average validation cross entropy to list
         ce_v.append(e_all.mean())
-        if j >= 5 and ce_v[j] > ce_v[j - 1]:
-            break
+        # early stopping
+        if j == 0:
+            val_fail = []
+        elif ce_v[j] > ce_v[j-1]:
+            val_fail.append(1)
+            if len(val_fail) == 5:
+                print 'Validation error has increased for 5 consecutive epochs. Early stopping at epoch {}'.format(j)
+                break
+        else:
+            val_fail = []
 # ----------------------------------------------------------------------------------------------------------------------
 # Test and evaluate the network
 # ----------------------------------------------------------------------------------------------------------------------
     # initialize confusion matrix series
-    actual = pd.Series(test.iloc[:, -2], name='Actual')
+    actual = pd.Series(test.iloc[:, -2])
 
     # create input matrix from test dataset
-    input = np.matrix(test.iloc[:, slice(0,num_inputs)]).transpose()
+    input = np.matrix(test.iloc[:, slice(0, num_inputs)]).transpose()
     nlayer1.FP(input)
     nlayer2.FP(nlayer1.a)
 
     predict = nl.classify(nlayer2.a)
     predict = np.array(predict).flatten()
     # generate confusion matrix of test results
-    predict = pd.Series(predict, name='Predicted')
-    confusion = pd.crosstab(actual, predict, margins=True)
+    predict = pd.Series(predict)
+    confusion = pd.crosstab(actual, predict, margins=False)
     print confusion
+
+    fig, ax = plt.subplots(figsize=(2.5, 2.5))
+    ax.matshow(confusion, cmap=plt.cm.Blues, alpha=0.3)
+    for i in range(confusion.shape[0]):
+        for j in range(confusion.shape[1]):
+            ax.text(x=j, y=i,
+                    s=confusion.iloc[i, j],
+                    va='center', ha='center')
+    plt.xlabel('Predicted Class')
+    plt.ylabel('True Class')
+    plt.title('Confusion Matrix of Test Set Predictions')
 
     # plot error
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=[8, 8])
-    ax.plot((np.arange(0, len(ce_t))), ce_t, label='Training')
-    ax.plot((np.arange(0, len(ce_v))), ce_v, label='Validation')
-    ax.set_ylabel('Average Cross Entropy Error')
-    ax.set_xlabel('Number of Batch Iterations')
+    ax.plot((np.arange(0, len(ce_t))), np.log(ce_t), label='Training')
+    ax.plot((np.arange(0, len(ce_v))), np.log(ce_v), label='Validation')
+    ax.set_ylabel('Log Cross Entropy Error')
+    ax.set_xlabel('Epochs')
     ax.legend()
     plt.grid()
     plt.show()
