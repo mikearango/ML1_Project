@@ -15,14 +15,14 @@ class NeuronLayer:
         self.s = w.shape[0]
         return
 
-    def processInput(self, p):
+    def FP(self, p):
         self.p = p
         self.n = self.w * self.p + self.b
         self.a = self.f(self.n)
         return
 
-    def learn(self, learning_rate, sensitivity):
-        self.w = self.w - learning_rate * sensitivity * np.transpose(self.p)
+    def update(self, learning_rate, sensitivity):
+        self.w = self.w - learning_rate * sensitivity * self.p.T
         self.b = self.b - learning_rate * sensitivity
         return
 
@@ -52,8 +52,7 @@ def tansig(n):
 
 # softmax transfer function a = e^n/sum(e^n)
 def softmax(n):
-    # a = np.exp(self.net_input())/np.exp(self.net_input()).sum()
-    return np.exp(n) / np.sum(np.exp(n), axis=0)
+    return np.exp(n) / np.sum(np.exp(n))
 
 # classify output
 def classify(a):
@@ -73,8 +72,8 @@ def j_softmax(a):
     for i in range(jacobian.shape[0]):
         for j in range(jacobian.shape[0]):
             if i == j:
-                x = np.zeros((a.shape[0]))
-                for k in range(jacobian.shape[0]):
+                x = np.zeros((a.shape[0], a.shape[0]))
+                for k in range(a.shape[0]):
                     x[k] = a[k] - a[i]
                 jacobian[i,j] = a[i] * np.sum(x)
             else:
@@ -87,25 +86,23 @@ def cross_entropy(a, t):
     i = np.where(a == 0)
     a[i] = 1e-15  # replace 0s so ln doesn't produce infinity
     e = -t * np.log(a)
-    #e = np.matrix([[-t[0,0] * np.log(a[0,0])], [-t[0,1] * np.log(a[1,0])]])
     return e
 
 
 # calculate hidden layer sensitivity
 def senseh(F_prime, W, s):
-    s = F_prime * np.transpose(W) * s
+    s = F_prime * W.T * s
     return s
 
 
 # calculate output layer sensitivity
-def senseo(F_prime, e):
-    s = -2 * F_prime * e
+def senseo(F_prime,t, a):
+    s = F_prime * (a - t)
     return s
 
-
-# define learning rule function
-def learn(weight_old, bias_old, sensitivity, input, learning_rate):
-    weight_new = weight_old - learning_rate * sensitivity * np.transpose(input)
+# update weights and biases
+def update(weight_old, bias_old, sensitivity, input, learning_rate):
+    weight_new = weight_old - learning_rate * sensitivity * input.T
     bias_new = bias_old - learning_rate * sensitivity
     return weight_new, bias_new
 

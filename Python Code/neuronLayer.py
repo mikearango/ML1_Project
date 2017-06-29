@@ -1,13 +1,16 @@
+# ----------------------------------------------------------------------------------------------------------------------
+# import statements
+# ----------------------------------------------------------------------------------------------------------------------
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import NLObjects as nl
 import DataPrep as dp
 import Split as sp
-
+# ----------------------------------------------------------------------------------------------------------------------
+# Data pre-processing
+# ----------------------------------------------------------------------------------------------------------------------
 # normalize data and split dataset into training, validation, testing sets
-
-
 def main():
     # import dataset
     glass = dp.GlassImport()
@@ -19,7 +22,7 @@ def main():
     num_neurons1 = 10
     num_neurons2 = 2
     alpha = 0.1
-    epoch = 30
+    epoch = 300
     nlayer1 = nl.NeuronLayer(num_neurons1, num_inputs, nl.tansig, nl.j_tansig)
     nlayer2 = nl.NeuronLayer(num_neurons2, num_neurons1, nl.softmax, nl.j_softmax)
     np.random.seed(0)
@@ -33,26 +36,19 @@ def main():
     # initialize cross entropy lists for training and validation sets
     ce_t = []
     ce_v = []
-
-    # training & validation
+    # Initialize weight and bias
     nlayer1.setWeightBias(w=W1, b=b1)
     nlayer2.setWeightBias(w=W2, b=b2)
-
+# ----------------------------------------------------------------------------------------------------------------------
+# training the network
+# ----------------------------------------------------------------------------------------------------------------------
     for j in range(epoch):
-
-
         for i in range(len(train)):
-
-            #set weights and biases
-
             # create input matrix from training dataset
             input = np.matrix(train.iloc[i, slice(0,num_inputs)]).transpose()
-
             # process network
-            nlayer1.processInput(input)
-            nlayer2.processInput(nlayer1.a)
-
-
+            nlayer1.FP(input)
+            nlayer2.FP(nlayer1.a)
             # calculate error of each iteration and update cost total
             target = np.matrix(train.iloc[i, -2:])
             e = nl.cross_entropy(nlayer2.a, target)
@@ -61,10 +57,9 @@ def main():
             else:
                 e_all = np.concatenate((e_all, e), axis=1)
             e = np.concatenate([e, e])
-            #e = np.asscalar(e)
 
             # calculate layer 2 sensitivity
-            s2 = nl.senseo(F_prime=nlayer2.j(nlayer2.a), e=e)
+            s2 = nl.senseo(F_prime=nlayer2.j(nlayer2.a), t=target, a=nlayer2.f(nlayer2.a))
             if i == 0:
                 s2_all = s2
             else:
@@ -80,16 +75,16 @@ def main():
         # append average cross entropy to list
         ce_t.append(e_all.mean())
 
-        # calculate new weight and bias for layer 2
-        nlayer2.learn(sensitivity=s2_all.mean(axis=1), learning_rate=alpha)
-        # calculate new weight and bias for layer 1
-        nlayer1.learn(sensitivity=s1_all.mean(axis=1), learning_rate=alpha)
+        # update weight and bias for layer 2
+        nlayer2.update(sensitivity=s2_all.mean(axis=1), learning_rate=alpha)
+        # update weight and bias for layer 1
+        nlayer1.update(sensitivity=s1_all.mean(axis=1), learning_rate=alpha)
 
         # validation
         input = np.matrix(validate.iloc[:, slice(0,num_inputs)]).transpose()
         # first layer
-        nlayer1.processInput(input)
-        nlayer2.processInput(nlayer1.a)
+        nlayer1.FP(input)
+        nlayer2.FP(nlayer1.a)
         target = np.matrix(validate.iloc[:, -2:])
         # compute errors
         for i in range(len(target)):
@@ -103,34 +98,33 @@ def main():
         ce_v.append(e_all.mean())
         if j >= 5 and ce_v[j] > ce_v[j - 1]:
             break
-
+# ----------------------------------------------------------------------------------------------------------------------
+# Test and evaluate the network
+# ----------------------------------------------------------------------------------------------------------------------
     # initialize confusion matrix series
     actual = pd.Series(test.iloc[:, -2], name='Actual')
 
-    # test network
-
     # create input matrix from test dataset
     input = np.matrix(test.iloc[:, slice(0,num_inputs)]).transpose()
-    nlayer1.processInput(input)
-    nlayer2.processInput(nlayer1.a)
+    nlayer1.FP(input)
+    nlayer2.FP(nlayer1.a)
 
     predict = nl.classify(nlayer2.a)
-
+    predict = np.array(predict).flatten()
     # generate confusion matrix of test results
-    predict = pd.Series(predict[0, :], name='Predicted')
+    predict = pd.Series(predict, name='Predicted')
     confusion = pd.crosstab(actual, predict, margins=True)
     print confusion
 
     # plot error
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=[8, 8])
-    ax.plot(np.arange(0, len(ce_t)), ce_t, label='Training')
-    ax.plot(np.arange(0, len(ce_v)), ce_v, label='Validation')
+    ax.plot((np.arange(0, len(ce_t))), ce_t, label='Training')
+    ax.loglog((np.arange(0, len(ce_v))), ce_v, label='Validation')
     ax.set_ylabel('Average Cross Entropy Error')
     ax.set_xlabel('Number of Batch Iterations')
     ax.legend()
     plt.grid()
     plt.show()
-
 
 if __name__ == '__main__':
     main()
