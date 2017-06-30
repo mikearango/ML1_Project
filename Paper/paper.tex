@@ -376,10 +376,13 @@ We chose to train the network over 100 epochs where one epoch represents a singl
 
 In attempts to speed up the iterative process used to train the model, we perform the validation simultaneously.  We use the same process to propagate inputs forward and compute the cross-entropy loss, but instead of updating the weights and biases based on the validation set, we use the weights and biases from the training set. This allows us to see if the network is training properly since the validation set is information our model has not been trained on. If the error keeps decreasing in the validation set as the number of iterations increases, this means our network is training properly. To ensure we do not overfit the data with our model, we implement an early stopping technique. We decided to have our network stop training if the validation error increased for five \emph{consecutive} epochs. If this happens to be the case, the script for the model will print to the console that training was stopped early and at what iteration it stopped. The code used to implement this can be found in Appendix E or in the include file \verb|NeuronLayer.py|.  
 
-
+\subsection{Testing the Network}
+Testing the network is a simple process since the network is trained and we just need to feed the inputs in to the network. Since the transfer function in the output layer is the \emph{softmax} function, the network output is the class probabilities between 0 and 1. Once the class probabilities are predicted, we need to use these to convert the probabilities to class predictions. To do this, we use 0.5 as the cutoff, so if one neuron receives a higher probability than the other, that one is chosen to be the positive output from the network and the other is assigned to be null. Then, we compare the predictions to the target which tells us the true class. Using this information, we can calculate classification error, accuracy, true and false positive rates, and construct a confusion matrix. We use all of these as performance metrics in discuss them in the next section. The code used to test the network can be found in Appendix F.
 
 \section{Results}
 \label{sec6}
+
+
 
 \section{Conclusion}
 \label{sec7}
@@ -390,6 +393,7 @@ In attempts to speed up the iterative process used to train the model, we perfor
 \printbibliography[heading=bibintoc, title={References}]
 
 \pagebreak
+
 \appendix
 
 \section{Importing the Data \& Coding the Targets}
@@ -516,6 +520,29 @@ elif ce_v[j] > ce_v[j-1]:
 		break
 else:
 	val_fail = []
+\end{lstlisting} 
+\pagebreak
+
+\section{Testing the Network}
+The code below shows the code used to test the network and calculate the performance metrics. 
+
+\begin{lstlisting}[style = Python]
+# --------------------- confusion matrix ---------------------
+actual = pd.Series(test.iloc[:, -2], name='Actual')  # actual values (targets)
+input = np.matrix(test.iloc[:, slice(0, num_inputs)]).transpose()  # network inputs, p
+nlayer1.FP(input)  # layer 1 net-input
+nlayer2.FP(nlayer1.a)  # layer 2 net-input
+predict = nl.classify(nlayer2.a)  # predicted values from network
+predict = np.array(predict).flatten()
+predict = pd.Series(predict, name='Predicted')
+confusion = pd.crosstab(actual, predict, margins=False)  # create confusion matrix
+confusion = confusion.astype(float)  # convert values to floats
+print confusion  # output confusion matrix to the console
+# --------------------- accuracy metrics ---------------------
+ERR = (confusion.loc[0, 1] + confusion.loc[1, 0]) / len(predict)
+ACC = 1 - ERR
+FPR = confusion.iloc[0, 1] / (confusion.iloc[0, 1] + confusion.iloc[0, 0])
+TPR = confusion.iloc[1, 1] / (confusion.iloc[1, 0] + confusion.iloc[1, 1])
 \end{lstlisting} 
 
 \end{document}
