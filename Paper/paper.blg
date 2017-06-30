@@ -1,15 +1,2 @@
-[0] Config.pm:324> INFO - This is Biber 2.1
-[0] Config.pm:327> INFO - Logfile is 'paper.blg'
-[53] biber-darwin:276> INFO - === Sun Jun 25, 2017, 15:09:28
-[53] Biber.pm:333> INFO - Reading 'paper.bcf'
-[172] Biber.pm:645> INFO - Found 5 citekeys in bib section 0
-[194] Biber.pm:2977> INFO - Processing section 0
-[212] Biber.pm:3115> INFO - Looking for bibtex format file 'paper.bib' for section 0
-[228] bibtex.pm:1021> INFO - Decoding LaTeX character macros into UTF-8
-[230] bibtex.pm:895> INFO - Found BibTeX data source 'paper.bib'
-[370] UCollate.pm:66> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[370] UCollate.pm:66> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[370] Biber.pm:2854> INFO - Sorting list 'ynt' of type 'entry' with scheme 'ynt' and locale 'en-US'
-[370] Biber.pm:2858> INFO - No sort tailoring available for locale 'en-US'
-[379] bbl.pm:505> INFO - Writing 'paper.bbl' with encoding 'UTF-8'
-[381] bbl.pm:596> INFO - Output to paper.bbl
+[0] 05015a72.pm:324> INFO - This is Biber 2.1
+[0] 05015a72.pm:327> INFO - Logfile is 'paper.blg'
