@@ -135,7 +135,7 @@ def main():
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=[8, 8])
     ax.plot((np.arange(0, len(ce_t))), np.log(ce_t), label='Training', linewidth=2.0, color='blue')
     ax.plot((np.arange(0, len(ce_v))), np.log(ce_v), label='Validation', linewidth=2.0, color='green')
-    ax.set_ylabel('Log Cross Entropy Error')
+    ax.set_ylabel('Log Cross Entropy Loss')
     ax.set_xlabel('Epochs')
     ax.legend()
     plt.grid()
