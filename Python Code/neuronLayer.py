@@ -22,7 +22,7 @@ def main():
     num_neurons1 = 10  # layer 1
     num_neurons2 = 2   # layer 2
     alpha = 0.01       # learning rate
-    epoch = 50        # number of iterations
+    epoch = 100        # number of iterations
     nlayer1 = nl.NeuronLayer(num_neurons1, num_inputs, nl.tansig, nl.j_tansig)      # instantiate layer 1
     nlayer2 = nl.NeuronLayer(num_neurons2, num_neurons1, nl.softmax, nl.j_softmax)  # instantiate layer 2
     np.random.seed(0)
@@ -109,7 +109,7 @@ def main():
     predict = np.array(predict).flatten()
     predict = pd.Series(predict, name='Predicted')
     confusion = pd.crosstab(actual, predict, margins=False)  # create confusion matrix
-    confusion = confusion.astype(float) # convert values to floats
+    confusion = confusion.astype(float)  # convert values to floats
     print confusion  # output confusion matrix to the console
     # --------------------- accuracy metrics ---------------------
     ERR = (confusion.loc[0, 1] + confusion.loc[1, 0]) / len(predict)

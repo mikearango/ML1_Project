@@ -72,10 +72,6 @@ def j_softmax(a):
     for i in range(jacobian.shape[0]):
         for j in range(jacobian.shape[0]):
             if i == j:
-                #x = np.zeros((a.shape[0], a.shape[0]))
-                #for k in range(a.shape[0]):
-                    #x[k] = a[k] - a[i]
-                #jacobian[i,j] = a[i] * np.sum(x)
                 jacobian[i,j] = a[i] * (1 - a[i])
             else:
                 jacobian[i, j] = -a[i] * a[j]
