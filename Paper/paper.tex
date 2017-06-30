@@ -58,9 +58,9 @@ An overview of the project and an outline of the report (I like to write intro a
 The dataset we will use for this analysis was initially employed in Evett and Spiehler's paper \emph{Rule Induction in Forensic Science} (1987) \cite{evett1987}. They recognized the usefulness to a forensic crime lab of classifying glass fragments based on refractive index and chemical composition. This would, for example, allow the lab to ascertain whether samples gathered on a suspect?s clothing came from a window, potentially indicating they had broken it, or from another source, like a broken bottle. 
 
 In their experiment, Evett and Spiehler wished to see if the Bionic Evolutionary Algorithm Generating Logical Expressions (BEAGLE) machine learning algorithm could correctly classify the glass---first as either window or non-window, and then into a second level of sub-categories. Our project focuses on the former and leaves the latter as a future exercise. The BEAGLE algorithm Evett and Spiehler used to train the network uses a series of logical ``and'' statements to chain rules together based on the inputs. They offer up the following example of a rule: 
-\[ 
+\begin{equation}
 \{(\mathrm{Fe} \leq \mathrm{Na}) \text{ and } [\mathrm{K} > (\mathrm{Fe} \cdot 650)]\}, 
-\]
+\end{equation}
 where $\mathrm{Fe}$, $\mathrm{Na}$, and $\mathrm{K}$ are the percent composition of iron, sodium, and potassium, respectively, of each glass sample. Evett and Spiehler found that the BEAGLE algorithm outperformed the $k$-Nearest Neighbors algorithm (with $ k = 3$) and Linear Discriminant Analysis (LDA)---the models they used for baseline performance measures. 
 
 The Department of Justice regularly issues research grants for the elemental analysis of glass. In 2012, they issued one such grant to researchers at Florida International University (FIU) to work with the Miami-Dade County Police Department \cite{almirall2012}. The researchers note that analysis of small quantities of materials has become an important yet underutilized type of evidence at many crime scenes including hit-and-run accidents and other violent crimes. The ability to classify different types of glass could be of vital importance in the case of a hit-and-run. Further, the group of researchers attempted to compare the discrimination power between the methods used in most forensic laboratories for glass analysis. Their aim was to create a more ``standard'' method that can be used by the operational forensic laboratory and a ``match criteria'' for use in routine casework situations.
@@ -114,13 +114,13 @@ The standard neural network architecture for pattern recognition problems is the
 We also need to select the number of neurons in each layer. The number of neurons we use in the output layer should be the same as the size of the target vector. In our case, this means we should use two neurons in the output layer. On the other hand, the number of neurons we use in the hidden layer is directly proportional to the the complexity of the decision boundary being implemented. Since we do not know the complexity of the decision boundary needed to classify these glass samples before training, we begin with ten neurons, which may be more than we need, and leverage early stopping techniques to prevent overfitting \cite{hagan2014}. 
 
 Now that we have chosen a network architecture, we can calculate the network output. The output from the hidden layer (the input to the output layer) can be calculated as 
-\[
+\begin{equation}
 \mathbf{a^{1}} = \textbf{tansig}(\mathbf{W^{1}}\mathbf{p} + \mathbf{b^{1}}), 
-\] 
+\end{equation}
 while the output from the output layer is 
-\[ 
+\begin{equation}
 \mathbf{a^{2}} = \textbf{softmax}(\mathbf{W^{2}}\mathbf{a^{1}} + \mathbf{b^{2}}). 
-\]
+\end{equation}
 The network architecture can be seen in \textbf{Figure 1} below. 
 \begin{figure}[H]
 \includegraphics[width = 6in]{figs/network.png}
@@ -137,7 +137,7 @@ Widrow and Hoff's Least Mean Square (LMS) learning rule suffered from the same d
 
 \subsection{Training Algorithm}
 \label{sec4.2}
-We chose to use the Scaled Conjugate Gradient (SCG) algorithm in MATLAB to train our network as it is very efficient for pattern recognition problems. For multi-layer networks, the Levenberg-Marquardt algorithm is often used, but it does not work well for pattern recognition as the transfer function in the output layer is operating outside the linear region. The scaled conjugate gradient algorithm is a special type of backpropagation. For the replication of the network in Python, we use standard backpropagation. 
+We chose to use the Scaled Conjugate Gradient (SCG) algorithm in MATLAB to train our network as it is very efficient for pattern recognition problems. For multi-layer networks, the Levenberg-Marquardt algorithm is often used, but it does not work well for pattern recognition as the transfer function in the output layer is operating outside the linear region. The scaled conjugate gradient algorithm is a special type of backpropagation. For the replication of the network in Python, we use standard backpropagation with steepest descent. 
 
 The implementation of backpropagation can be broken down into three steps: 
 \begin{enumerate}
@@ -147,6 +147,127 @@ The implementation of backpropagation can be broken down into three steps:
 \end{enumerate}
 
 \subsubsection{Forward Propagation}
+\label{sec4.2.1}
+For a multilayer network, the output from one layer is the input to the next layer. That is, the hidden layer's output is the input to the output layer of the network. The neurons in the first layer receive external inputs (the observed data):
+\begin{equation}
+\mathbf{a}^{0} = \mathbf{p},
+\end{equation}
+which serves as the starting point for the network. After the input is received, it is propagated forward with the following equation
+\begin{equation}
+\mathbf{a}^{m+1} = \mathbf{f}^{m+1}(\mathbf{W}^{m+1}\mathbf{a}^{m} + \mathbf{b}^{m+1}), \text{ for \emph{m} = 0, 1, \ldots, $M - 1$} 
+\end{equation}
+where we use $M$ to denote the number of layers in the network. Then, the output from the the neurons in the last layer are
+\begin{equation}
+\mathbf{a} = \mathbf{a}^{M}.
+\end{equation}
+
+\subsubsection{Performance Index}
+\label{sec4.2.2}
+Before moving on to the step of backpropagating the sensitivities, we discuss the performance index as it is a critical part of the process. The performance index is a measure of the error of the network outputs in relation to the targets. The general implementation of the backpropagation algorithm uses the \emph{mean square error} as a performance index. The mean square error is approximated by taking the expectation of the sum of the squared errors (residuals). However, we choose a different performance index to gauge our model's predictions. 
+
+Mean square error works very well for functions with continuous target values---the case where we are approximating a function. However, in pattern recognition we are given discrete target values, so other performance indices that take this into account make more sense. We choose to use \emph{cross-entropy} as our performance index. This is a commonly used performance index when the \emph{softmax} transfer function is used in the output layer. Given a set of input-target pairs 
+\begin{equation}
+\{\mathbf{p}_{1}, \mathbf{t}_{1}\}, \{\mathbf{p}_{2}, \mathbf{t}_{2}\}, \ldots, \{\mathbf{p}_{Q}, \mathbf{t}_{Q}\}
+\end{equation}
+where $\mathbf{p}_{q}$ is an input and $\mathbf{t}_{q}$ is the corresponding target output, we denote the cross-entropy loss as follows: 
+\begin{equation}
+F(\mathbf{x}) = - \sum_{q = 1}^{Q} \sum_{i = 1}^{S^{M}} t_{i, q} \ln \frac{a_{i, q}}{t_{i, q}}
+\end{equation}
+where $Q$ is the number of samples in the dataset and $S^{M}$ is the number of neurons in the output layer. We can simplify this by vectorizing the operation over all input-target pairs, $\{\mathbf{p}_{q}, \mathbf{t}_{q}\}$, and eliminating the first summation: 
+\begin{equation}
+- \sum_{i = 1}^{S^{M}} \mathbf{t}_{i} \ln \frac{\mathbf{a}_{i}}{\mathbf{t}_{i}}.
+\end{equation}
+Recall that in our pattern recognition problem we have two classes where the targets are $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$ and $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$. Thus, each neuron can only take on values of zero or one. This allows us to further simplify the equation to 
+\begin{equation}
+- \mathbf{t} \ln \mathbf{a}
+\end{equation}
+since $\mathbf{t}_{i} = 0$ implies the cross-entropy loss for the $i$-th neuron is zero and the case where 
+$\mathbf{t}_{i} = 1$ implies the cross-entropy loss is simply $ - \mathbf{t}_{i} \ln \mathbf{a}_{i}$.  
+
+It is important to note the backpropagation algorithm works with any differentiable performance index we specify. We just need to change the initialization of the sensitivities in the output layer accordingly. This brings us back to the next step: propagating the sensitivities backward through the network \cite{hagan2014}.
+
+\subsubsection{Backpropagation}
+\label{sec4.2.3}
+Once we have propagated the input forward, we tcompare the network output to the targets so we can use the error to adjust the weights and biases accordingly. But, in the case of a multi-layer network, the errors and the performance index we use to evaluate those errors are no longer just a function of the weights. Rather, they are indirectly a function of the weights in the hidden layer in addition to the weights in the output layer. Thus, we call the errors we propagate backward through the network `sensitivities' because they represent the sensitivity of the performance index, $F(\mathbf{x})$, to changes in the $i$-th element of the net input at layer $m$. We can calculate these sensitivities analytically as follows: 
+\begin{equation}
+s^{m}_{i} \equiv \frac{\partial F}{\partial n^{m}_{i}}. 
+\end{equation}
+Now, we compute the sensitivities $\mathbf{s}^{m}$. Note that the reason we call it backpropagation is because the sensitivities are propagated backward through the network via a recurrence relation where the sensitivity at layer $m$ is calculated from the sensitivity at layer $m+1$. This is easier said than done, however, since we need to find a Jacobian matrix of sensitivities to derive the recurrence relation: 
+\begin{equation}
+\frac{\partial \mathbf{n}^{m+1}}{\partial \mathbf{n}^{m}} \equiv \begin{bmatrix} 
+\frac{\partial n^{m+1}_{1}}{\partial n^{m}_{1}} &  \frac{\partial n^{m+1}_{1}}{\partial n^{m}_{2}} & \dots &  \frac{\partial n^{m+1}_{1}}{\partial n^{m}_{S^{m}}} \\
+\frac{\partial n^{m+1}_{2}}{\partial n^{m}_{1}} &  \frac{\partial n^{m+1}_{2}}{\partial n^{m}_{2}} & \dots & \frac{\partial n^{m+1}_{2}}{\partial n^{m}_{S^{m}}} \\
+\vdots & \vdots &  & \vdots \\
+\frac{\partial n^{m+1}_{S^{m+1}}}{\partial n^{m}_{1}} &  \frac{\partial n^{m+1}_{S^{m+1}}}{\partial n^{m}_{2}} & \dots & \frac{\partial n^{m+1}_{S^{m+1}}}{\partial n^{m}_{S^{m}}}
+\end{bmatrix}
+\end{equation}
+To find an expression to represent this Jacobian matrix, we arbitrarily select the $i, j$ element of the matrix in accordance with Hagan's derivation: 
+\begin{equation}
+\begin{split}
+\frac{\partial n^{m+1}_{i}}{\partial \mathbf{n}^{m}_{j}} &= \frac{\partial \bigg(\sum_{l=1}^{S^{m}} w_{i, l}^{m+1}a_{l}^{m} + b_{i}^{m+1}\bigg)}{\partial n_{j}^{m}} = w_{i, j}^{m+1} \frac{\partial a_{j}^{m}}{\partial n_{j}^{m}} \\
+&= w_{i, j}^{m+1} \frac{\partial f^{m}(n_{j}^{m}}{\partial n_{j}^{m}} = w_{i, j}^{m+1} \dot{f}^{m}(n_{j}^{m}) ,  
+\end{split}
+\end{equation}
+where 
+\begin{equation}
+\dot{f}^{m}(n_{j}^{m}) = \frac{\partial f^{m}(n_{j}^{m})}{\partial n_{j}^{m}}.
+\end{equation}
+Thus, we can write the Jacobian from before as 
+\begin{equation}
+\frac{\partial \mathbf{n}^{m+1}}{\partial \mathbf{n}^{m}} = \mathbf{W}^{m+1} \dot{\mathbf{F}}^{m}(\mathbf{n}^{m}), 
+\end{equation}
+where 
+\begin{equation}
+\dot{\mathbf{F}}^{m}(\mathbf{n}^{m}) = \begin{bmatrix} \dot{f}^{m}(n_{1}^{m}) & 0 & \ldots & 0 \\ 
+0 & \dot{f}^{m}(n_{2}^{m}) & \ldots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\ 
+0 & 0 & \ldots & \dot{f}^{m}(n_{S^{m}}^{m}) \end{bmatrix}.
+\end{equation}
+Now the recurrence relation for the hidden layer sensitivities can be written as 
+\begin{equation}
+\begin{split}
+\mathbf{s}^{m} & = \dot{\mathbf{F}}^{m}(\mathbf{n}^{m})(\mathbf{W}^{m+1})^{T}\frac{\partial \hat{F}}{\partial \mathbf{n}^{m+1}} \\
+& = \dot{\mathbf{F}}^{m}(\mathbf{n}^{m})(\mathbf{W}^{m+1})^{T}\mathbf{s}^{m+1},
+\end{split}
+\end{equation}
+where $\hat{F}$ denotes the performance index as it is an approximation of the network error \cite{hagan2014}. But, we know the network architecture and performance index used, so we can refine the general equation. The transfer function in the hidden layer is the tangent-sigmoid function and we find the derivative as follows: 
+\begin{equation}
+\begin{split}
+\dot{f}^{1} & = \frac{d(\tanh(n))}{dn} = \frac{d}{dn}\bigg(\frac{\sinh(n)}{\cosh(n)}\bigg) \\
+ & = \frac{\cosh^{2}(n) - \sinh^{2}(n)}{\cosh^{2}(n)} = 1 - \tanh^{2}(n). 
+\end{split}
+\end{equation}
+Therefore, 
+\begin{equation}
+\dot{\mathbf{F}}^{1}(\mathbf{n}^{1}) = \begin{bmatrix} 1 - \tanh^{2}(n_{1}^{1}) & 0 & \ldots & 0 \\ 
+0 & 1 - \tanh^{2}(n_{2}^{1}) & \ldots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\ 
+0 & 0 & \ldots & 1 - \tanh^{2}(n_{10}^{1}) \end{bmatrix}.
+\end{equation}
+and the first layer sensitivity is 
+\begin{equation}
+\mathbf{s}^{1} = \dot{\mathbf{F}}^{1}(\mathbf{n}^{1})(\mathbf{W}^{2})^{T}\mathbf{s}^{2}.
+\end{equation}
+The only thing left to do is calculate the sensitivity for the output layer, $\mathbf{s}^{2}$. Calculating the sensitivity for the output layer is a little more difficult as the derivative of the performance index with respect to the net input of the output layer is indirectly a function of the net input of the hidden layer. We can derive the sensitivity for the output layer as follows: 
+\begin{equation}
+\begin{split}
+\mathbf{s}^{2} & = \frac{\partial \hat{F}}{\partial \mathbf{n}_{i}^{2}} = - \sum_{s = 1}^{2} \frac{\partial \mathbf{t}_{s} \ln \mathbf{a}_{s}}{\partial \mathbf{n}_{s}} \\
+& = - \sum_{s = 1}^{2} \mathbf{t}_{s} \frac{\partial \ln \mathbf{a}_{s}}{\partial \mathbf{n}_{i}} = - \sum_{s = 1}^{2} \mathbf{t}_{s} \frac{1}{\mathbf{a}_{s}} \frac{\partial \mathbf{a}_{s}}{\partial \mathbf{n}_{i}}
+\end{split}
+\end{equation}
+where $i$ and $s$ denote the $i$-th and $s$-th neuron, respectively, and 
+\begin{equation}
+\frac{\partial a_{s}}{\partial n_{i}} = \dot{\mathbf{F}}^{2}.
+\end{equation}
+Now we find the derivative of the \emph{softmax} transfer function to be used in the sensitivity calculation: 
+\begin{equation}
+\begin{split}
+\text{if } i = j\text{: } \frac{\partial a_{i}}{\partial n_{i}} = \frac{\partial \textbf{softmax}(n_{i})}{\partial n_{i}}
+
+\text{if } i \neq j\text{: }
+\end{split}
+\end{equation}
+
 
 
 \section{Experimental Setup}
