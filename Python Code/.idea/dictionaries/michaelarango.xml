@@ -2,6 +2,7 @@
   <dictionary name="michaelarango">
     <words>
       <w>backprop</w>
+      <w>backpropagate</w>
       <w>dataset</w>
       <w>jacobian</w>
       <w>nlayer</w>
