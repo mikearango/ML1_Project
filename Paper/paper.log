@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  30 JUN 2017 20:03
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  2 JUL 2017 16:32
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1288,20 +1288,20 @@ File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 File: figs/network.png Graphic file (type png)
 
 <use figs/network.png>
-Package pdftex.def Info: figs/network.png used on input line 181.
+Package pdftex.def Info: figs/network.png used on input line 180.
 (pdftex.def)             Requested size: 433.62pt x 116.32103pt.
  [7 <./figs/network.png>] [8] [9] [10] [11] [12] [13]
 [14] [15] <figs/CEloss.png, id=72, 578.16pt x 578.16pt>
 File: figs/CEloss.png Graphic file (type png)
  <use figs/CEloss.png>
-Package pdftex.def Info: figs/CEloss.png used on input line 383.
+Package pdftex.def Info: figs/CEloss.png used on input line 382.
 (pdftex.def)             Requested size: 361.34999pt x 361.3491pt.
 
 [16 <./figs/CEloss.png>] <figs/confmat.png, id=77, 361.35pt x 361.35pt>
 File: figs/confmat.png Graphic file (type png)
 
 <use figs/confmat.png>
-Package pdftex.def Info: figs/confmat.png used on input line 396.
+Package pdftex.def Info: figs/confmat.png used on input line 395.
 (pdftex.def)             Requested size: 216.81pt x 216.81168pt.
  [17 <./figs/confmat.png>] [18] [19] [20] [21]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -1337,7 +1337,7 @@ ive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive
 5/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2015/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/2015/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on paper.pdf (27 pages, 317300 bytes).
+Output written on paper.pdf (27 pages, 317276 bytes).
 PDF statistics:
  170 PDF objects out of 1000 (max. 8388607)
  116 compressed objects within 2 object streams
