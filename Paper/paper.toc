@@ -38,20 +38,20 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {5.4}Testing the Network}{16}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {6}Results}{16}
+\contentsline {section}{\numberline {6}Results}{17}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {7}Conclusion}{16}
+\contentsline {section}{\numberline {7}Conclusion}{19}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{References}{17}
+\contentsline {section}{References}{21}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {A}Importing the Data \& Coding the Targets}{18}
+\contentsline {section}{\numberline {A}Importing the Data \& Coding the Targets}{22}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {B}Data Normalization \& Division}{19}
+\contentsline {section}{\numberline {B}Data Normalization \& Division}{23}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {C}Python Class for Network Layers}{20}
+\contentsline {section}{\numberline {C}Python Class for Network Layers}{24}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {D}Initializing the Network Architecture in Python}{21}
+\contentsline {section}{\numberline {D}Initializing the Network Architecture in Python}{25}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {E}Early Stopping}{22}
+\contentsline {section}{\numberline {E}Early Stopping}{26}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {F}Testing the Network}{23}
+\contentsline {section}{\numberline {F}Testing the Network}{27}

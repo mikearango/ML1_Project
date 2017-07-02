@@ -376,17 +376,88 @@ We chose to train the network over 100 epochs where one epoch represents a singl
 
 In attempts to speed up the iterative process used to train the model, we perform the validation simultaneously.  We use the same process to propagate inputs forward and compute the cross-entropy loss, but instead of updating the weights and biases based on the validation set, we use the weights and biases from the training set. This allows us to see if the network is training properly since the validation set is information our model has not been trained on. If the error keeps decreasing in the validation set as the number of iterations increases, this means our network is training properly. To ensure we do not overfit the data with our model, we implement an early stopping technique. We decided to have our network stop training if the validation error increased for five \emph{consecutive} epochs. If this happens to be the case, the script for the model will print to the console that training was stopped early and at what iteration it stopped. The code used to implement this can be found in Appendix E or in the include file \verb|NeuronLayer.py|.  
 
+Figure 2 below shows the $\log$ cross-entropy loss of the training and validation sets while we are training the network. We can see no clear signs of overfitting as the $\log$ of the loss function continues to decrease monotonically for both sets over time. If the $\log$ of the loss function for the validation set started to increase over time, then this would be an indication of overfitting, but our early stopping condition would stop the network from training any further. Since the $\log$ of the loss function has not started to level off after 100 epochs at a learning rate of 0.01, we may be able to increase the number of epochs or increase the learning rate to see if this yields better results. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 5in]{figs/CEloss.png}
+\caption{$\log$ Cross-Entropy Loss on Training and Validation Sets over Time}
+\end{figure}  
+
 \subsection{Testing the Network}
 Testing the network is a simple process since the network is trained and we just need to feed the inputs in to the network. Since the transfer function in the output layer is the \emph{softmax} function, the network output is the class probabilities between 0 and 1. Once the class probabilities are predicted, we need to use these to convert the probabilities to class predictions. To do this, we use 0.5 as the cutoff, so if one neuron receives a higher probability than the other, that one is chosen to be the positive output from the network and the other is assigned to be null. Then, we compare the predictions to the target which tells us the true class. Using this information, we can calculate classification error, accuracy, true and false positive rates, and construct a confusion matrix. We use all of these as performance metrics in discuss them in the next section. The code used to test the network can be found in Appendix F.
 
 \section{Results}
 \label{sec6}
 
+For pattern recognition problems, the confusion matrix is one of the most widely used tools to visualize the misclassification of a network. The columns of a confusion matrix represent the target class and the rows represent the predicted class. Thus, the correctly classified inputs are on the diagonal cells of the confusion matrix, whereas the off-diagonal cells show misclassified inputs. The confusion matrix from the test set can be seen in Figure 3 below. 
+\begin{figure}[H]
+\centering
+\includegraphics[width = 3in]{figs/confmat.png}
+\caption{Confusion Matrix for the Multi-Layer Perceptron Network on the Test Set}
+\end{figure}  
 
+Recall that there are 33 samples in our test set. Since the the diagonal cells add up to 32, our model correctly classified 32 out of the 33 samples. We can use this information to calculate the accuracy of our model: 
+\begin{equation}
+Accuracy = \frac{TP + TN}{FP + FN + TP + TN}.
+\end{equation}
+The top left cell of the confusion matrix represents true negatives (TN) and the bottom right cell represents true positives (TP). Adding up the diagonal cells and dividing by the total number of samples, we find that our model has a 97\% accuracy. This is higher than the vast majority of the tests we ran in MATLAB. We can use this accuracy score to find that our misclassification error is 3\% since: 
+\begin{equation}
+accuracy = 1 - error \implies error = 1 - accuracy. 
+\end{equation}
+However, the error can also be computed as
+\begin{equation}
+error = \frac{FP + FN}{FP + FN + TP + TN}
+\end{equation}
+which is essentially the sum of the off-diagonal cells divided by the sample size. 
+
+In addition to simply looking at the accuracy and error of the model on the training set, we can break this down even further since our classes are imbalanced. From the confusion matrix in Figure 3, we can see the positive class contains more than \emph{three} times as many elements as the null class. The false positive and true positive rates can be computed as follows: 
+\begin{equation}
+FPR = \frac{FP}{FP + TN} , 
+\end{equation}
+\begin{equation}
+TPR = \frac{TP}{FN + TP}.
+\end{equation}
+We find that the false positive rate and true positive rate is 0 and 0.96, respectively. A false positive rate of zero implies there was not a single time that our model committed a \emph{Type I} error. That is, the network did not predict a glass sample to be a a window glass when it was a non-window glass. This is very important for use in forensic analysis as it is costly to tie someone to a crime scene when they were not actually there. In fact, this could potentially result in a wrongful conviction for a suspect if they are unlucky. However, it is equally as important not to commit \emph{Type II} errors in this scenario. 
+
+Type II errors correspond to false negatives. That is, the model predicts a sample of glass is a non-window glass when it is window glass. From the bottom left cell in Figure 3, we can see our model produced one false negative. Type II errors are costly in the sense that if we classify a window glass as a non-window glass in forensic analysis, we could wrongly-free a suspect back into society when they in fact committed the crime. However, we should not be alarmed at the single false negative as the true positive rate is 0.96. This means that 96\% of the time, we are correctly classifying the positive class since the true positive rate is the number of true positives divided by the total number of positive targets. 
+
+Precision and recall are two other performance metrics related to true positive and false positive rates. Precision can be denoted by 
+\begin{equation}
+PRE = \frac{TP}{TP + FP}
+\end{equation}
+and recall is analogous to the true positive rate. Our precision happens to be 100\% which is very good. It is important for a model to be both accurate and precise as accuracy is the model being correct and precision is the actual reproducibility of our measurements. If a model is accurate and not precise, it can fluctuate drastically between tests with regard to the performance metrics. Table 1 below gives a summary of the scoring metrics. 
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{2}{|l|}{Summary of Scoring Metrics} \\ \hline
+Accuracy                       & 97\%            \\ \hline
+Error                          & 3\%             \\ \hline
+False Positives                & 0               \\ \hline
+False Positive Rate            & 0\%             \\ \hline
+True Positives                 & 24              \\ \hline
+True Positive Rate             & 96\%            \\ \hline
+Precision                      & 100\%           \\ \hline
+Recall                         & 96\%            \\ \hline
+\end{tabular}
+\caption{Summary of Scoring Metrics used on Test Set}
+\label{my-label}
+\end{table}
 
 \section{Conclusion}
 \label{sec7}
 
+Using a multi-layer perceptron, we were able to train a neural network that correctly classifies whether a glass sample came from a window or not 97\% of the time. We used several optical and physicochemical properties of glass to make these predictions. We quickly implemented the multi-layer perceptron in MATLAB's Neural Network Toolboox (\verb|nntool|) and then replicated the network in Python. 
+
+This project helped us to understand how flexible and powerful two-layer neural networks can be. Almost any problem can be solved with a two-layer neural network if you have good data, preprocess the data in accordance with the selected network architecture, and choose the right transfer functions and performance index to solve the problem. In class, all of the back propagation problems we solved by hand only had one neuron in the output layer and used a \emph{purelin} transfer function. Building this network in Python without using packages taught us how to use backpropagation with a different performance index and how to derive the sensitivity for the output layer with respect to the output layer and the hidden layer. 
+
+We feel that there are several ways the model could be improved, aside from the general performance. The code we wrote in Python is very rough and can be neatly packaged together if more time is spent working on the class we defined. Moreover, we could add the backpropagation process as a method to the class instead of doing this outside of the class structure as we do in the \verb|NeuronLayer.py| file. In the future, we wish to add the ability to pass a performance index as input to the class when instantiating. 
+
+Similarly, we feel there are a few more performance metrics we could use to interpret the results of the model. A receiver operator characteristic (ROC) curve would allow us to see how changing the decision threshold would impact the false positive and true positive rates. This is especially important if we need to bias the model towards one class in the case of imbalanced classes. After plotting the ROC curve, we could compute the area under the curve (AUC) to characterize the performance of the model. 
+
+The one thing our model is lacking is a good way to compare it to the results from the MATLAB model. In the future, we may wish to find a way to split our training, validation, and test sets up ahead of time and then pass each programming framework the same sets. This would give an apples-to-apples comparison of the models as they would be trained, validated, and tested on the exact same data. 
 
 \pagebreak
 
